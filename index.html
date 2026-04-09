@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mesh Print Studio — Contract Pricing</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600;700&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brick:       #7e261a;
+      --brick-dark:  #641e14;
+      --brick-light: #a33020;
+      --forest:      #2f352b;
+      --forest-dark: #1d2219;
+      --forest-mid:  #252c20;
+      --cream:       #fef6ec;
+      --sage:        #c8d4b0;
+      --blush:       #f8e4d7;
+      --tan:         #d9b380;
+      --tan-dark:    #b8925f;
+      --text:        #fef6ec;
+      --text-mid:    #ccc4b0;
+      --text-muted:  #8a9a7a;
+      --border:      #3c4436;
+      --border-dark: #4e5a46;
+      --white:       #252c20;
+      --card-bg:     #252c20;
+    }
+
+    body {
+      font-family: 'Barlow', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--forest);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--forest-dark);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 3px solid var(--brick);
+    }
+    .logo { display: flex; align-items: center; }
+    .mesh-wordmark { height: 38px; width: auto; color: var(--cream); display: block; }
+    .badge {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase;
+      background: transparent; border: 1.5px solid var(--tan);
+      color: var(--tan); padding: 5px 14px; border-radius: 3px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--forest-dark);
+      text-align: center; padding: 52px 24px 44px;
+      border-bottom: 1px solid var(--border);
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: 'MESH'; position: absolute;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900; font-size: 280px;
+      color: rgba(255,255,255,0.03);
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      letter-spacing: -8px; pointer-events: none; white-space: nowrap;
+    }
+    .hero-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; text-transform: uppercase;
+      letter-spacing: 3px; color: var(--tan); font-weight: 600;
+      margin-bottom: 16px; position: relative;
+    }
+    .hero h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 52px; font-weight: 900; letter-spacing: 1px;
+      text-transform: uppercase; line-height: 1; margin-bottom: 14px;
+      color: var(--cream); position: relative;
+    }
+    .hero h1 span { color: var(--brick-light); }
+    .hero p {
+      color: rgba(254,246,236,0.6); font-size: 15px;
+      max-width: 460px; margin: 0 auto; line-height: 1.6;
+      font-weight: 400; position: relative;
+    }
+
+    /* ── LAYOUT ── */
+    .layout {
+      max-width: 1000px; margin: 0 auto;
+      padding: 32px 24px 80px;
+      display: grid; grid-template-columns: 1fr 380px;
+      gap: 24px; align-items: start;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 22px; margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    }
+    .card:last-child { margin-bottom: 0; }
+    .card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; text-transform: uppercase; letter-spacing: 2px;
+      color: var(--text-muted); font-weight: 700; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .card-title::before {
+      content: ''; width: 3px; height: 14px;
+      background: var(--brick); border-radius: 2px; display: block;
+    }
+
+    /* ── QUANTITY ── */
+    .qty-wrapper { display: flex; align-items: center; gap: 10px; }
+    .qty-btn {
+      width: 40px; height: 40px; background: var(--forest-dark);
+      border: 1px solid var(--border-dark); border-radius: 6px;
+      color: var(--text-muted); font-size: 20px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s; flex-shrink: 0;
+    }
+    .qty-btn:hover { background: var(--brick); border-color: var(--brick-dark); color: var(--cream); }
+    .qty-input {
+      flex: 1; background: var(--forest-dark);
+      border: 2px solid var(--border-dark); border-radius: 6px;
+      color: var(--cream); font-size: 32px; font-weight: 700;
+      font-family: 'Barlow Condensed', sans-serif;
+      text-align: center; padding: 8px; outline: none;
+      transition: border-color 0.15s; -moz-appearance: textfield;
+    }
+    .qty-input::-webkit-inner-spin-button,
+    .qty-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+    .qty-input:focus { border-color: var(--brick); }
+    .qty-range { width: 100%; margin-top: 14px; accent-color: var(--brick); cursor: pointer; }
+    .qty-tiers { display: flex; justify-content: space-between; margin-top: 6px; }
+    .qty-tiers span { font-size: 10px; color: var(--text-muted); letter-spacing: 0.5px; }
+    .tier-indicator {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 12px; background: var(--forest-dark);
+      border: 1px solid var(--border); border-radius: 6px; margin-top: 12px;
+    }
+    .tier-dot { width: 8px; height: 8px; border-radius: 50%; background: #4a7c59; flex-shrink: 0; }
+    .tier-text { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+    .tier-text strong { color: var(--text); }
+
+    /* ── MULTI-LOCATION BLOCKS ── */
+    .loc-blocks { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
+    .loc-block { background: var(--forest-dark); border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .loc-block-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 14px; border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,0.18);
+    }
+    .loc-block-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--text-muted);
+    }
+    .loc-remove-btn {
+      width: 20px; height: 20px; background: transparent;
+      border: 1px solid var(--border-dark); border-radius: 4px;
+      color: var(--text-muted); font-size: 15px; line-height: 1;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .loc-remove-btn:hover { background: var(--brick); border-color: var(--brick); color: var(--cream); }
+    .loc-block-body { padding: 13px 14px; display: flex; flex-direction: column; gap: 11px; }
+    .loc-preset-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .preset-btn {
+      padding: 5px 11px; background: var(--forest-mid);
+      border: 1.5px solid var(--border); border-radius: 5px;
+      color: var(--text-muted); font-size: 12px; font-weight: 600;
+      font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.3px;
+      cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .preset-btn:hover { border-color: var(--border-dark); color: var(--tan); }
+    .preset-btn.active { border-color: var(--tan); color: var(--cream); }
+    .preset-btn.active.platen { border-color: var(--brick-light); color: var(--cream); }
+    .platen-tag {
+      font-size: 9px; font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; letter-spacing: 0.5px;
+      background: rgba(126,38,26,0.3); border: 1px solid var(--brick-light);
+      color: #f0a090; padding: 1px 5px; border-radius: 3px;
+    }
+    .loc-other-input {
+      width: 100%; background: var(--forest-mid);
+      border: 1.5px solid var(--border-dark); border-radius: 5px;
+      color: var(--text-mid); font-size: 13px; font-family: 'Barlow', sans-serif;
+      padding: 7px 10px; outline: none; transition: border-color 0.15s;
+    }
+    .loc-other-input::placeholder { color: var(--text-muted); }
+    .loc-other-input:focus { border-color: var(--brick); }
+    .loc-file-row { display: flex; align-items: center; gap: 8px; }
+    .loc-file-label {
+      font-size: 10px; color: var(--text-muted); font-weight: 700;
+      font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px;
+      text-transform: uppercase; white-space: nowrap; flex-shrink: 0;
+    }
+    .loc-upload-btn {
+      background: var(--brick); color: var(--cream);
+      border: none; border-radius: 5px; padding: 5px 12px;
+      font-size: 11px; font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
+      cursor: pointer; flex-shrink: 0; transition: background 0.15s;
+    }
+    .loc-upload-btn:hover { background: var(--brick-light); }
+    .loc-file-name {
+      flex: 1; font-size: 12px; color: var(--text-mid);
+      font-family: 'Barlow', sans-serif; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis;
+    }
+    .loc-file-name.empty { color: var(--text-muted); font-style: italic; }
+    .loc-file-clear {
+      background: none; border: none; color: var(--text-muted);
+      font-size: 16px; cursor: pointer; padding: 0 2px; flex-shrink: 0;
+      line-height: 1; transition: color 0.15s;
+    }
+    .loc-file-clear:hover { color: var(--brick-light); }
+    .loc-file-ref-input {
+      flex: 1; background: var(--forest-dark); color: var(--text-mid);
+      border: 1px solid var(--border); border-radius: 5px;
+      padding: 6px 9px; font-size: 12px;
+      font-family: 'Barlow', sans-serif; transition: border-color 0.15s;
+    }
+    .loc-file-ref-input::placeholder { color: var(--text-muted); font-style: italic; }
+    .loc-file-ref-input:focus { outline: none; border-color: var(--brick); }
+    .info-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--border); color: var(--text-muted);
+      font-size: 10px; font-weight: 700; font-style: italic;
+      font-family: 'Barlow', sans-serif;
+      cursor: help; flex-shrink: 0; position: relative;
+      transition: background 0.15s, color 0.15s;
+      user-select: none;
+    }
+    .info-icon:hover, .info-icon:focus {
+      background: var(--brick); color: var(--cream); outline: none;
+    }
+    .info-icon::after {
+      content: attr(data-tip);
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--forest-dark);
+      color: var(--cream);
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 11px; font-weight: 400; font-style: normal;
+      font-family: 'Barlow', sans-serif; line-height: 1.4;
+      white-space: normal; width: 220px; text-align: left;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.15s;
+      z-index: 100;
+    }
+    .info-icon:hover::after, .info-icon:focus::after { opacity: 1; }
+    .loc-dim-row { display: flex; align-items: center; gap: 7px; }
+    .loc-dim-label {
+      font-size: 10px; color: var(--text-muted); font-weight: 700;
+      font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px;
+      text-transform: uppercase; white-space: nowrap; flex-shrink: 0;
+    }
+    .loc-dim-input {
+      width: 50px; background: var(--forest-dark);
+      border: 1.5px solid var(--border); border-radius: 5px;
+      color: var(--text-mid); font-size: 12px; font-family: 'Barlow', sans-serif;
+      padding: 6px 6px; outline: none; transition: border-color 0.15s;
+      text-align: center; -moz-appearance: textfield;
+    }
+    .loc-dim-input::-webkit-inner-spin-button,
+    .loc-dim-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+    .loc-dim-input:focus { border-color: var(--brick); }
+    .loc-dim-sep  { color: var(--text-muted); font-size: 12px; flex-shrink: 0; }
+    .loc-dim-unit { color: var(--text-muted); font-size: 11px; flex-shrink: 0; }
+    .info-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 14px; height: 14px; border-radius: 50%;
+      border: 1.5px solid var(--text-muted); color: var(--text-muted);
+      font-size: 8px; font-weight: 800; font-family: 'Barlow Condensed', sans-serif;
+      cursor: default; flex-shrink: 0; position: relative; user-select: none;
+      vertical-align: middle; margin-left: 3px;
+    }
+    .info-icon::after {
+      content: attr(data-tip);
+      position: absolute; bottom: calc(100% + 7px); right: 0;
+      transform: none;
+      background: var(--forest-dark); color: var(--text-mid);
+      font-size: 11px; font-family: 'Barlow', sans-serif; font-weight: 400;
+      padding: 8px 11px; border-radius: 7px; border: 1px solid var(--border-dark);
+      white-space: normal; width: 230px; text-align: left; line-height: 1.55;
+      pointer-events: none; opacity: 0; transition: opacity 0.18s;
+      z-index: 50; letter-spacing: 0;
+    }
+    .info-icon:hover::after { opacity: 1; }
+
+    /* ── ADDRESS MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.65);
+      z-index: 1000; display: flex; align-items: center; justify-content: center;
+    }
+    .modal-box {
+      background: var(--card-bg); border: 1px solid var(--border-dark);
+      border-radius: 12px; width: 430px; max-width: 93vw;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.55);
+    }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 22px 14px; border-bottom: 1px solid var(--border);
+    }
+    .modal-title {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 16px;
+      font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--cream);
+    }
+    .modal-close {
+      background: none; border: none; color: var(--text-muted);
+      font-size: 24px; cursor: pointer; line-height: 1; padding: 0; transition: color 0.15s;
+    }
+    .modal-close:hover { color: var(--cream); }
+    .modal-body { padding: 18px 22px; display: flex; flex-direction: column; gap: 13px; }
+    .addr-field-group { display: flex; flex-direction: column; gap: 5px; }
+    .addr-label {
+      font-size: 10px; color: var(--text-muted); font-weight: 700;
+      font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px; text-transform: uppercase;
+    }
+    .addr-input {
+      background: var(--forest-dark); border: 1.5px solid var(--border); border-radius: 6px;
+      color: var(--text-mid); font-size: 13px; font-family: 'Barlow', sans-serif;
+      padding: 10px 12px; outline: none; transition: border-color 0.15s; width: 100%;
+    }
+    .addr-input::placeholder { color: var(--text-muted); }
+    .addr-input:focus { border-color: var(--brick); }
+    .addr-row-3 { display: flex; gap: 8px; }
+    .addr-row-3 .addr-field-group { flex: 1; }
+    .addr-row-3 .addr-state { flex: 0 0 62px; }
+    .modal-footer { padding: 14px 22px 20px; border-top: 1px solid var(--border); }
+    .modal-save-btn {
+      width: 100%; padding: 12px; background: var(--brick); border: none;
+      border-radius: 7px; color: var(--cream); font-family: 'Barlow Condensed', sans-serif;
+      font-size: 14px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .modal-save-btn:hover { background: var(--brick-light); }
+    .addr-summary {
+      margin-top: 10px; font-size: 12px; color: var(--text-mid); line-height: 1.5;
+    }
+    .addr-edit-link {
+      font-size: 11px; color: var(--tan); cursor: pointer; text-decoration: underline;
+      display: inline-block; margin-top: 4px;
+    }
+    .addr-edit-link:hover { color: var(--tan-dark); }
+    .loc-colors-label {
+      font-size: 10px; color: var(--text-muted); font-weight: 700;
+      font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px;
+      text-transform: uppercase; margin-bottom: 5px;
+    }
+    .loc-color-row { display: flex; gap: 5px; flex-wrap: wrap; }
+    .lc-btn {
+      min-width: 34px; height: 32px; padding: 0 6px;
+      background: var(--forest-mid); border: 1.5px solid var(--border);
+      border-radius: 5px; color: var(--text-muted);
+      font-size: 11px; font-weight: 700;
+      font-family: 'Barlow Condensed', sans-serif;
+      cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .lc-btn:hover { border-color: var(--tan-dark); color: var(--tan); }
+    .lc-btn.active { background: var(--brick); border-color: var(--brick-dark); color: var(--cream); }
+    .lc-btn.unavail { opacity: 0.25; cursor: not-allowed; }
+    .add-loc-btn {
+      width: 100%; padding: 10px; background: transparent;
+      border: 1.5px dashed var(--border-dark); border-radius: 8px;
+      color: var(--text-muted); font-size: 11px; font-weight: 700;
+      font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px;
+      text-transform: uppercase; cursor: pointer; transition: all 0.15s;
+    }
+    .add-loc-btn:hover { border-color: var(--brick-light); color: var(--tan); background: rgba(126,38,26,0.07); }
+    .add-loc-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* ── TOGGLE ── */
+    .toggle-row {
+      display: flex; background: var(--forest-dark);
+      border: 1.5px solid var(--border); border-radius: 8px;
+      padding: 3px; gap: 3px;
+    }
+    .toggle-opt {
+      flex: 1; padding: 10px; border-radius: 6px;
+      text-align: center; font-size: 12px; font-weight: 600;
+      font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.5px;
+      cursor: pointer; transition: all 0.15s; color: var(--text-muted);
+    }
+    .toggle-opt.active { background: var(--brick); color: var(--cream); }
+
+    /* ── RUSH ── */
+    .rush-grid { display: flex; flex-direction: column; gap: 8px; }
+    .rush-opt {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 16px; background: var(--forest-dark);
+      border: 1.5px solid var(--border); border-radius: 8px;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .rush-opt:hover { border-color: var(--border-dark); }
+    .rush-opt.active.standard { border-color: #5a9a6a; background: #1a2a1e; }
+    .rush-opt.active.oneweek  { border-color: var(--brick-light); background: #2a1512; }
+    .rush-opt.active.twoday   { border-color: var(--tan); background: #2a2010; }
+    .rush-left { display: flex; align-items: center; gap: 10px; }
+    .rush-radio {
+      width: 16px; height: 16px; border-radius: 50%;
+      border: 2px solid var(--border-dark); transition: all 0.15s; flex-shrink: 0;
+    }
+    .rush-opt.active.standard .rush-radio { border-color: #4a7c59; background: #4a7c59; }
+    .rush-opt.active.oneweek  .rush-radio { border-color: var(--brick); background: var(--brick); }
+    .rush-opt.active.twoday   .rush-radio { border-color: var(--forest); background: var(--forest); }
+    .rush-name { font-size: 13px; color: var(--text-mid); font-weight: 600; }
+    .rush-sub  { font-size: 11px; color: var(--text-muted); }
+    .rush-mult {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 800; letter-spacing: 0.5px;
+      padding: 4px 11px; border-radius: 4px;
+      background: var(--border); color: var(--text-muted);
+      border: 1px solid var(--border-dark);
+    }
+    .rush-opt.active.standard .rush-mult { background: #1e3a26; color: #7dcf96; border-color: #3a7a50; }
+    .rush-opt.active.oneweek  .rush-mult { background: #3a1410; color: #f09080; border-color: var(--brick-light); }
+    .rush-opt.active.twoday   .rush-mult { background: #3a2a0a; color: var(--tan); border-color: var(--tan-dark); }
+
+    /* ── EXTRAS ── */
+    .extras-list { display: flex; flex-direction: column; gap: 8px; }
+    .extra-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 13px; background: var(--forest-dark);
+      border: 1.5px solid var(--border); border-radius: 7px;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .extra-item:hover { border-color: var(--border-dark); }
+    .extra-item.checked { border-color: var(--brick-light); background: #2a1210; }
+    .extra-item.locked { cursor: default; }
+    .extra-left { display: flex; align-items: center; gap: 10px; }
+    .extra-check {
+      width: 18px; height: 18px; border: 1.5px solid var(--border-dark);
+      border-radius: 4px; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.15s;
+    }
+    .extra-item.checked .extra-check { background: var(--brick); border-color: var(--brick); }
+    .extra-check svg { display: none; }
+    .extra-item.checked .extra-check svg { display: block; }
+    .extra-name { font-size: 13px; color: var(--text-mid); font-weight: 500; }
+    .auto-tag {
+      font-size: 9px; font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; letter-spacing: 0.5px;
+      background: rgba(126,38,26,0.4); border: 1px solid var(--brick-light);
+      color: #f09080; padding: 1px 5px; border-radius: 3px; margin-left: 6px;
+    }
+    .extra-price { font-size: 12px; color: var(--text-muted); white-space: nowrap; font-weight: 500; }
+
+    /* ── CLIENT INFO ── */
+    .client-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .client-field { display: flex; flex-direction: column; gap: 5px; }
+    .client-field.full { grid-column: 1 / -1; }
+    .client-label {
+      font-size: 10px; font-weight: 700;
+      font-family: 'Barlow Condensed', sans-serif;
+      letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted);
+      display: flex; align-items: center; gap: 4px;
+    }
+    .client-label .req { color: var(--brick-light); font-size: 12px; line-height: 1; }
+    .client-input {
+      width: 100%; background: var(--forest-dark);
+      border: 1.5px solid var(--border); border-radius: 6px;
+      color: var(--text-mid); font-size: 13px; font-family: 'Barlow', sans-serif;
+      padding: 10px 12px; outline: none; transition: border-color 0.15s;
+    }
+    .client-input::placeholder { color: var(--text-muted); }
+    .client-input:focus { border-color: var(--brick); }
+    .client-input.invalid { border-color: var(--brick-light); background: #2a1210; }
+    @media (max-width: 480px) { .client-grid { grid-template-columns: 1fr; } }
+
+    /* ── DUE DATE / FLEXIBILITY ── */
+    .date-flex-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 480px) { .date-flex-grid { grid-template-columns: 1fr; } }
+    .date-input {
+      width: 100%; background: var(--forest-dark);
+      border: 1.5px solid var(--border); border-radius: 6px;
+      color: var(--text-mid); font-size: 13px; font-family: 'Barlow', sans-serif;
+      padding: 10px 12px; outline: none; transition: border-color 0.15s;
+      color-scheme: dark; appearance: none; -webkit-appearance: none;
+    }
+    .date-input:focus { border-color: var(--brick); }
+    .date-input option { background: var(--forest-dark); color: var(--text-mid); }
+
+    /* ── SHIPPING ── */
+    .shipping-est {
+      margin-top: 12px; padding: 11px 14px;
+      background: var(--forest-dark); border: 1px solid var(--border);
+      border-radius: 6px; font-size: 12px; color: var(--text-muted); line-height: 1.7;
+    }
+    .shipping-est strong { color: var(--tan); font-weight: 700; }
+    .shipping-caveat {
+      margin-top: 5px; font-size: 11px; color: var(--text-muted);
+      font-style: italic; opacity: 0.75;
+    }
+    .breakdown-row.shipping-row .lbl { color: var(--sage); }
+    .breakdown-row.shipping-row .val { color: var(--sage); }
+
+    /* ── PMS EXPAND ── */
+    .extra-pms-wrap { display: flex; flex-direction: column; }
+    .extra-pms-wrap .extra-item.checked { border-radius: 7px 7px 0 0; border-bottom-color: transparent; }
+    .pms-expand {
+      background: #200f0d; border: 1.5px solid var(--brick-light);
+      border-top: none; border-radius: 0 0 7px 7px;
+      padding: 12px 13px 14px; display: flex; flex-direction: column; gap: 11px;
+    }
+    .pms-count-row { display: flex; align-items: center; justify-content: space-between; }
+    .pms-count-label {
+      font-size: 11px; font-weight: 700;
+      font-family: 'Barlow Condensed', sans-serif;
+      letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted);
+    }
+    .pms-count-ctrl { display: flex; align-items: center; gap: 10px; }
+    .pms-count-btn {
+      width: 28px; height: 28px; background: var(--forest-mid);
+      border: 1.5px solid var(--border-dark); border-radius: 5px;
+      color: var(--text-muted); font-size: 17px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s; flex-shrink: 0;
+    }
+    .pms-count-btn:hover { background: var(--brick); border-color: var(--brick); color: var(--cream); }
+    .pms-count-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px; font-weight: 800;
+      color: var(--tan); min-width: 18px; text-align: center; line-height: 1;
+    }
+    .pms-field-label {
+      font-size: 10px; font-weight: 700;
+      font-family: 'Barlow Condensed', sans-serif;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: 5px;
+    }
+    .pms-input {
+      width: 100%; background: var(--forest-mid);
+      border: 1.5px solid var(--border-dark); border-radius: 5px;
+      color: var(--text-mid); font-size: 12px; font-family: 'Barlow', sans-serif;
+      padding: 8px 10px; outline: none; transition: border-color 0.15s;
+    }
+    .pms-input::placeholder { color: var(--text-muted); }
+    .pms-input:focus { border-color: var(--brick); }
+    .pms-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+    .pms-tag {
+      padding: 3px 9px; background: rgba(126,38,26,0.3);
+      border: 1px solid var(--brick-light); border-radius: 4px;
+      font-size: 11px; font-weight: 600;
+      font-family: 'Barlow Condensed', sans-serif;
+      color: #f0a090; letter-spacing: 0.3px;
+    }
+
+    /* ── GARMENT DESCRIPTION ── */
+    .garment-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .garment-row:last-of-type { margin-bottom: 0; }
+    .garment-type-select {
+      background: var(--forest-dark);
+      border: 1.5px solid var(--border); border-radius: 6px;
+      color: var(--text-mid); font-size: 13px; font-family: 'Barlow', sans-serif;
+      padding: 10px 30px 10px 12px; outline: none; cursor: pointer;
+      transition: border-color 0.15s; appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a9a7a'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center;
+      flex-shrink: 0;
+    }
+    .garment-type-select:focus { border-color: var(--brick); }
+    .garment-desc-input {
+      flex: 1; background: var(--forest-dark);
+      border: 1.5px solid var(--border); border-radius: 6px;
+      color: var(--text-mid); font-size: 12px; font-family: 'Barlow', sans-serif;
+      padding: 10px 12px; outline: none; transition: border-color 0.15s;
+    }
+    .garment-desc-input::placeholder { color: var(--text-muted); }
+    .garment-desc-input:focus { border-color: var(--brick); }
+    .garment-remove-btn {
+      width: 24px; height: 24px; background: transparent;
+      border: 1px solid var(--border-dark); border-radius: 4px;
+      color: var(--text-muted); font-size: 15px; line-height: 1;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s; flex-shrink: 0;
+    }
+    .garment-remove-btn:hover { background: var(--brick); border-color: var(--brick); color: var(--cream); }
+    .add-garment-btn {
+      width: 100%; padding: 10px; margin-top: 12px; background: transparent;
+      border: 1.5px dashed var(--border-dark); border-radius: 8px;
+      color: var(--text-muted); font-size: 11px; font-weight: 700;
+      font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px;
+      text-transform: uppercase; cursor: pointer; transition: all 0.15s;
+    }
+    .add-garment-btn:hover { border-color: var(--brick-light); color: var(--tan); background: rgba(126,38,26,0.07); }
+
+    /* ── PROJECT DESCRIPTION ── */
+    .desc-textarea {
+      width: 100%; min-height: 88px; background: var(--forest-dark);
+      border: 1.5px solid var(--border); border-radius: 6px;
+      color: var(--text-mid); font-size: 13px; font-family: 'Barlow', sans-serif;
+      padding: 12px 14px; outline: none; resize: vertical;
+      transition: border-color 0.15s; line-height: 1.6;
+    }
+    .desc-textarea::placeholder { color: var(--text-muted); }
+    .desc-textarea:focus { border-color: var(--brick); }
+
+    /* ── ART FILE UPLOAD (Google Drive) ── */
+    .art-upload-instructions {
+      font-size: 13px; color: var(--text-mid); line-height: 1.5;
+      margin-bottom: 14px;
+    }
+    .art-upload-instructions strong { color: var(--tan); }
+    .art-upload-instructions code {
+      background: var(--forest-dark); color: var(--tan);
+      padding: 1px 6px; border-radius: 3px; font-size: 12px;
+      font-family: 'Menlo', 'Monaco', monospace;
+    }
+    .art-upload-btn {
+      display: block; width: 100%; box-sizing: border-box;
+      background: var(--brick); color: var(--cream);
+      border: none; border-radius: 8px;
+      padding: 16px 20px; text-align: center;
+      font-size: 15px; font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+      cursor: pointer; text-decoration: none;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .art-upload-btn:hover { background: var(--brick-light); }
+    .art-upload-btn:active { transform: translateY(1px); }
+    .art-upload-sub {
+      font-size: 11px; color: var(--text-muted);
+      text-align: center; margin-top: 8px;
+    }
+    .art-upload-checkbox-row { margin-top: 14px; }
+    .art-upload-checkbox-label {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--text-mid); cursor: pointer;
+    }
+    .art-upload-checkbox-label input[type="checkbox"] {
+      width: 16px; height: 16px; accent-color: var(--brick);
+      cursor: pointer;
+    }
+    .file-list { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+    .file-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 12px; background: var(--border);
+      border: 1px solid var(--border-dark); border-radius: 6px;
+    }
+    .file-left { display: flex; align-items: center; gap: 8px; }
+    .file-icon { font-size: 14px; }
+    .file-name { font-size: 12px; color: var(--text-mid); font-weight: 600; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .file-size { font-size: 10px; color: var(--text-muted); }
+    .file-remove { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 18px; padding: 0 2px; transition: color 0.15s; line-height: 1; }
+    .file-remove:hover { color: var(--brick-light); }
+
+    /* ── RESULT CARD ── */
+    .result-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 8px; overflow: hidden;
+      position: sticky; top: 24px; box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+    .result-header {
+      background: var(--brick); padding: 24px; text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .result-header::before {
+      content: ''; position: absolute; inset: 0;
+      background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.04) 10px, rgba(0,0,0,0.04) 20px);
+    }
+    .result-header .label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px; text-transform: uppercase; letter-spacing: 2.5px;
+      color: rgba(254,246,236,0.7); font-weight: 700; margin-bottom: 6px; position: relative;
+    }
+    .result-header .price-big {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 60px; font-weight: 900; color: var(--cream);
+      line-height: 1; letter-spacing: -1px; position: relative;
+    }
+    .result-header .price-sub { font-size: 13px; color: rgba(254,246,236,0.7); margin-top: 4px; position: relative; }
+    .result-header.rush-1 { background: var(--brick-dark); }
+    .result-header.rush-2 { background: var(--forest); }
+    .result-body { padding: 20px; }
+    .breakdown-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px;
+    }
+    .breakdown-row:last-of-type { border-bottom: none; }
+    .breakdown-row .lbl { color: var(--text-muted); font-weight: 500; }
+    .breakdown-row .val { color: var(--text-mid); font-weight: 700; font-variant-numeric: tabular-nums; }
+    .breakdown-row.rush-row .lbl { color: #f09080; font-weight: 600; }
+    .breakdown-row.rush-row .val { color: #f09080; }
+    .breakdown-row.rush-row.danger .lbl { color: var(--tan); }
+    .breakdown-row.rush-row.danger .val { color: var(--tan); }
+    .breakdown-row.total-row {
+      margin-top: 10px; padding-top: 14px;
+      border-top: 2px solid var(--border-dark); border-bottom: none;
+    }
+    .breakdown-row.total-row .lbl { color: var(--text-mid); font-weight: 800; font-size: 14px; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
+    .breakdown-row.total-row .val { color: var(--tan); font-size: 22px; font-weight: 900; font-family: 'Barlow Condensed', sans-serif; }
+    .cta-btn {
+      width: 100%; margin-top: 16px; padding: 14px;
+      background: var(--brick); color: var(--cream); border: none; border-radius: 6px;
+      font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 800;
+      letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: all 0.15s;
+    }
+    .cta-btn:hover { background: var(--brick-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(126,38,26,0.3); }
+    .note-text { text-align: center; font-size: 11px; color: var(--text-muted); margin-top: 10px; line-height: 1.6; }
+    .note-disclaimer { color: var(--text-muted); font-style: italic; opacity: 0.75; }
+
+    /* ── FLOATING SUMMARY BAR ── */
+    .float-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--forest-dark); border-top: 2px solid var(--brick);
+      padding: 12px 28px; display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; z-index: 200;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 -6px 28px rgba(0,0,0,0.5);
+    }
+    .float-bar.visible { transform: translateY(0); }
+    .float-bar-left { display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; }
+    .float-ppc-group, .float-total-group { display: flex; flex-direction: column; gap: 1px; }
+    .float-label { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); }
+    .float-ppc { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 900; color: var(--tan); line-height: 1; }
+    .float-total { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 800; color: var(--cream); line-height: 1; }
+    .float-divider { width: 1px; height: 32px; background: var(--border-dark); flex-shrink: 0; }
+    .float-cta {
+      padding: 10px 22px; background: var(--brick); border: none; border-radius: 6px;
+      color: var(--cream); font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+      cursor: pointer; white-space: nowrap; transition: background 0.15s; flex-shrink: 0;
+    }
+    .float-cta:hover { background: var(--brick-dark); }
+    @media (max-width: 480px) {
+      .float-bar { padding: 10px 16px; }
+      .float-ppc { font-size: 22px; }
+      .float-total { font-size: 15px; }
+      .float-divider { display: none; }
+    }
+
+    /* ── DIVIDER LINE ── */
+    .section-divider { height: 1px; background: var(--border); margin: 6px 0 18px; }
+
+    @media (max-width: 720px) {
+      .layout { grid-template-columns: 1fr; }
+      .result-card { position: static; }
+      .hero h1 { font-size: 38px; }
+      header { padding: 14px 20px; }
+      .mesh-wordmark { height: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="logo">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 309.468 79.2013" class="mesh-wordmark" aria-label="Mesh Print Studio">
+    <g>
+    <path style=" stroke:none;fill-rule:nonzero;fill:currentColor;" d="M 92.953125 66.152344 L 205.742188 66.152344 L 205.742188 64.734375 L 92.953125 64.734375 Z M 92.953125 66.152344 "/>
+    <path style=" stroke:none;fill-rule:nonzero;fill:currentColor;" d="M 97.460938 12.257812 C 100.964844 12.257812 103.519531 14.8125 103.519531 18.316406 L 103.519531 51.929688 L 92.949219 51.929688 C 89.445312 51.988281 86.890625 49.375 86.890625 45.871094 L 86.890625 29.003906 L 85.703125 29.003906 C 84.992188 29.003906 84.574219 29.777344 84.574219 30.847656 L 84.515625 51.929688 L 74.121094 51.929688 C 70.617188 51.988281 68.0625 49.375 68.0625 45.871094 L 68.0625 29.003906 L 66.875 29.003906 C 66.101562 29.300781 65.746094 29.777344 65.746094 30.847656 L 65.746094 51.929688 L 50.660156 51.929688 C 49.828125 51.988281 49.175781 51.277344 49.175781 50.445312 L 49.175781 18.316406 C 49.175781 14.8125 51.730469 12.257812 55.234375 12.257812 L 77.328125 12.257812 L 76.4375 18.433594 C 76.320312 19.085938 76.675781 19.742188 77.328125 19.859375 C 77.921875 19.917969 78.457031 19.503906 78.574219 18.851562 L 79.527344 13.207031 C 79.644531 12.613281 80.121094 12.257812 80.652344 12.257812 Z M 97.460938 12.257812 "/>
+    <path style=" stroke:none;fill-rule:nonzero;fill:currentColor;" d="M 162.269531 12.261719 L 179.496094 12.261719 C 180.917969 12.195312 181.785156 13.226562 181.234375 14.253906 L 172.457031 29.753906 C 172.003906 30.582031 172.09375 31.09375 172.585938 31.378906 C 173.390625 31.835938 173.878906 31.125 174.246094 30.589844 L 181.582031 18.175781 C 185.132812 12.128906 190.65625 12.257812 194.996094 12.257812 C 207.546875 12.257812 209.992188 22.226562 209.992188 31.875 C 209.992188 39.078125 206.582031 48.972656 202.242188 51.929688 L 186.265625 51.929688 C 184.84375 51.996094 183.976562 50.964844 184.527344 49.871094 L 192.984375 35.027344 C 193.402344 34.316406 193.777344 33.742188 192.917969 33.261719 C 192.214844 32.863281 191.683594 33.355469 191.289062 34.128906 L 184.503906 45.449219 C 180.242188 52.585938 176.453125 51.816406 169.351562 51.816406 C 160.277344 51.816406 155.386719 43.324219 155.386719 31.875 C 155.386719 24.863281 158.324219 15.21875 162.269531 12.261719 "/>
+    <path style=" stroke:none;fill-rule:nonzero;fill:currentColor;" d="M 152.300781 39.402344 C 153.132812 39.402344 153.789062 40.054688 153.789062 40.886719 L 153.789062 50.746094 C 153.789062 51.398438 153.253906 51.933594 152.597656 51.933594 L 106.863281 51.933594 C 106.03125 51.933594 105.378906 51.28125 105.378906 50.449219 L 105.378906 13.742188 C 105.378906 12.910156 106.03125 12.257812 106.863281 12.257812 L 152.597656 12.257812 C 153.253906 12.257812 153.789062 12.792969 153.789062 13.445312 L 153.789062 23.304688 C 153.789062 24.136719 153.132812 24.789062 152.300781 24.789062 L 123.199219 24.789062 L 123.199219 26.867188 L 152.300781 26.867188 C 153.132812 26.867188 153.789062 27.523438 153.789062 28.355469 L 153.789062 35.835938 C 153.789062 36.726562 153.132812 37.382812 152.300781 37.382812 L 123.199219 37.382812 L 123.199219 39.402344 Z M 152.300781 39.402344 "/>
+    <path style=" stroke:none;fill-rule:nonzero;fill:currentColor;" d="M 258.28125 51.933594 L 238.003906 51.933594 C 237.171875 51.933594 236.519531 51.28125 236.519531 50.449219 L 236.519531 37.261719 L 234.25 37.261719 L 234.25 50.449219 C 234.25 51.28125 233.597656 51.933594 232.765625 51.933594 L 212.902344 51.933594 C 212.011719 51.933594 211.359375 51.28125 211.359375 50.449219 L 211.359375 13.742188 C 211.359375 12.910156 212.011719 12.257812 212.84375 12.257812 L 232.703125 12.257812 C 233.597656 12.257812 234.25 12.910156 234.25 13.742188 L 234.25 26.867188 L 236.519531 26.867188 L 236.519531 13.742188 C 236.519531 12.910156 237.171875 12.257812 238.003906 12.257812 L 258.28125 12.257812 C 259.113281 12.257812 259.765625 12.910156 259.765625 13.742188 L 259.765625 50.390625 C 259.765625 51.28125 259.113281 51.933594 258.28125 51.933594 "/>
+    <path style=" stroke:none;fill-rule:nonzero;fill:currentColor;" d="M 50.671875 61.554688 L 52.132812 61.554688 C 52.464844 61.554688 52.726562 61.460938 52.921875 61.273438 C 53.113281 61.082031 53.210938 60.839844 53.210938 60.539062 L 53.210938 60.398438 C 53.210938 60.101562 53.113281 59.855469 52.921875 59.667969 C 52.726562 59.476562 52.464844 59.382812 52.132812 59.382812 L 50.671875 59.382812 Z M 50.671875 63.039062 L 50.671875 66.152344 L 49.175781 66.152344 L 49.175781 57.898438 L 52.28125 57.898438 C 52.6875 57.898438 53.042969 57.96875 53.34375 58.105469 C 53.648438 58.242188 53.898438 58.425781 54.097656 58.648438 C 54.296875 58.871094 54.449219 59.125 54.550781 59.414062 C 54.652344 59.699219 54.703125 59.992188 54.703125 60.292969 L 54.703125 60.574219 C 54.703125 60.882812 54.652344 61.183594 54.550781 61.476562 C 54.449219 61.773438 54.296875 62.035156 54.097656 62.269531 C 53.898438 62.5 53.648438 62.6875 53.34375 62.828125 C 53.042969 62.96875 52.6875 63.039062 52.28125 63.039062 Z M 50.671875 63.039062 "/>
+    <path style=" stroke:none;fill-rule:nonzero;fill:currentColor;" d="M 59.710938 61.554688 L 61.140625 61.554688 C 61.503906 61.554688 61.777344 61.464844 61.964844 61.289062 C 62.15625 61.113281 62.25 60.863281 62.25 60.539062 L 62.25 60.398438 C 62.25 60.125 62.15625 59.886719 61.964844 59.683594 C 61.777344 59.484375 61.503906 59.382812 61.140625 59.382812 L 59.710938 59.382812 Z M 63.542969 66.152344 L 62.046875 66.152344 L 62.046875 63.675781 C 62.046875 63.488281 62 63.335938 61.90625 63.214844 C 61.808594 63.101562 61.652344 63.039062 61.433594 63.039062 L 59.710938 63.039062 L 59.710938 66.152344 L 58.214844 66.152344 L 58.214844 57.898438 L 61.253906 57.898438 C 61.660156 57.898438 62.019531 57.957031 62.328125 58.074219 C 62.640625 58.191406 62.898438 58.355469 63.105469 58.5625 C 63.3125 58.773438 63.472656 59.015625 63.582031 59.289062 C 63.691406 59.566406 63.746094 59.859375 63.746094 60.175781 L 63.746094 60.457031 C 63.746094 60.796875 63.660156 61.113281 63.484375 61.40625 C 63.3125 61.703125 63.042969 61.925781 62.679688 62.085938 L 62.679688 62.296875 C 62.945312 62.328125 63.15625 62.433594 63.308594 62.617188 C 63.464844 62.796875 63.542969 63.023438 63.542969 63.300781 Z M 63.542969 66.152344 "/>
+    <path style=" stroke:none;fill-rule:nonzero;fill:currentColor;" d="M 67.234375 57.898438 L 72.539062 57.898438 L 72.539062 59.382812 L 70.632812 59.382812 L 70.632812 64.667969 L 72.539062 64.667969 L 72.539062 66.152344 L 67.234375 66.152344 L 67.234375 64.667969 L 69.140625 64.667969 L 69.140625 59.382812 L 67.234375 59.382812 Z M 67.234375 57.898438 "/>
+    <path style=" stroke:none;fill-rule:nonzero;fill:currentColor;" d="M 79.992188 65.375 L 80.195312 65.375 L 80.195312 57.898438 L 81.691406 57.898438 L 81.691406 66.152344 L 78.769531 66.152344 L 77.839844 58.675781 L 77.636719 58.675781 L 77.636719 66.152344 L 76.140625 66.152344 L 76.140625 57.898438 L 79.0625 57.898438 Z M 79.992188 65.375 "/>
+    <path style=" stroke:none;fill-rule:nonzero;fill:currentColor;" d="M 85.089844 57.898438 L 90.800781 57.898438 L 90.800781 59.382812 L 88.695312 59.382812 L 88.695312 66.152344 L 87.199219 66.152344 L 87.199219 59.382812 L 85.089844 59.382812 Z M 85.089844 57.898438 "/>
+    <path style=" stroke:none;fill-rule:nonzero;fill:currentColor;" d="M 213.054688 60.222656 C 213.054688 59.894531 212.929688 59.605469 212.683594 59.363281 C 212.4375 59.121094 212.09375 59 211.648438 59 C 211.269531 59 210.972656 59.078125 210.753906 59.238281 C 210.53125 59.402344 210.425781 59.621094 210.425781 59.894531 C 210.425781 60.035156 210.449219 60.164062 210.503906 60.277344 C 210.558594 60.390625 210.648438 60.492188 210.78125 60.582031 C 210.914062 60.675781 211.085938 60.753906 211.300781 60.824219 C 211.515625 60.894531 211.792969 60.964844 212.125 61.027344 C 212.953125 61.183594 213.589844 61.445312 214.027344 61.816406 C 214.464844 62.1875 214.683594 62.730469 214.683594 63.457031 L 214.683594 63.597656 C 214.683594 63.980469 214.617188 64.332031 214.488281 64.640625 C 214.355469 64.953125 214.164062 65.21875 213.914062 65.4375 C 213.664062 65.65625 213.363281 65.824219 213.007812 65.945312 C 212.652344 66.0625 212.25 66.121094 211.804688 66.121094 C 211.285156 66.121094 210.828125 66.042969 210.429688 65.890625 C 210.035156 65.738281 209.703125 65.523438 209.4375 65.253906 C 209.175781 64.984375 208.972656 64.664062 208.839844 64.296875 C 208.703125 63.933594 208.632812 63.535156 208.632812 63.101562 L 208.632812 62.746094 L 210.128906 62.746094 L 210.128906 63.03125 C 210.128906 63.527344 210.269531 63.921875 210.542969 64.214844 C 210.820312 64.511719 211.246094 64.660156 211.828125 64.660156 C 212.28125 64.660156 212.617188 64.554688 212.839844 64.351562 C 213.058594 64.148438 213.164062 63.902344 213.164062 63.621094 C 213.164062 63.488281 213.144531 63.359375 213.097656 63.238281 C 213.054688 63.113281 212.972656 63.003906 212.859375 62.90625 C 212.746094 62.808594 212.59375 62.722656 212.394531 62.640625 C 212.199219 62.5625 211.949219 62.496094 211.648438 62.441406 C 211.246094 62.371094 210.882812 62.277344 210.550781 62.164062 C 210.214844 62.050781 209.925781 61.898438 209.683594 61.710938 C 209.4375 61.523438 209.246094 61.285156 209.109375 61.003906 C 208.972656 60.71875 208.90625 60.375 208.90625 59.964844 L 208.90625 59.894531 C 208.90625 59.554688 208.972656 59.242188 209.105469 58.957031 C 209.234375 58.667969 209.421875 58.421875 209.660156 58.207031 C 209.898438 57.996094 210.183594 57.832031 210.519531 57.710938 C 210.855469 57.59375 211.230469 57.535156 211.648438 57.535156 C 212.117188 57.535156 212.53125 57.605469 212.894531 57.742188 C 213.257812 57.878906 213.5625 58.066406 213.804688 58.300781 C 214.050781 58.539062 214.238281 58.808594 214.363281 59.117188 C 214.488281 59.421875 214.546875 59.746094 214.546875 60.082031 L 214.546875 60.507812 L 213.054688 60.507812 Z M 213.054688 60.222656 "/>
+    <path style=" stroke:none;fill-rule:nonzero;fill:currentColor;" d="M 217.867188 57.699219 L 223.578125 57.699219 L 223.578125 59.1875 L 221.472656 59.1875 L 221.472656 65.957031 L 219.976562 65.957031 L 219.976562 59.1875 L 217.867188 59.1875 Z M 217.867188 57.699219 "/>
+    <path style=" stroke:none;fill-rule:nonzero;fill:currentColor;" d="M 232.609375 57.699219 L 232.609375 63.101562 C 232.609375 64.042969 232.367188 64.785156 231.890625 65.320312 C 231.410156 65.851562 230.699219 66.121094 229.753906 66.121094 C 228.808594 66.121094 228.097656 65.851562 227.617188 65.320312 C 227.136719 64.785156 226.898438 64.042969 226.898438 63.101562 L 226.898438 57.699219 L 228.394531 57.699219 L 228.394531 63.101562 C 228.394531 63.589844 228.503906 63.96875 228.722656 64.246094 C 228.941406 64.519531 229.285156 64.65625 229.753906 64.65625 C 230.222656 64.65625 230.566406 64.519531 230.785156 64.246094 C 231.003906 63.96875 231.113281 63.589844 231.113281 63.101562 L 231.113281 57.699219 Z M 232.609375 57.699219 "/>
+    <path style=" stroke:none;fill-rule:nonzero;fill:currentColor;" d="M 238.714844 64.46875 C 239.234375 64.46875 239.601562 64.34375 239.808594 64.085938 C 240.015625 63.832031 240.121094 63.433594 240.121094 62.890625 L 240.121094 60.625 C 240.121094 60.152344 240.015625 59.796875 239.808594 59.550781 C 239.601562 59.308594 239.234375 59.1875 238.714844 59.1875 L 238.082031 59.1875 L 238.082031 64.46875 Z M 235.835938 57.699219 L 238.714844 57.699219 C 239.699219 57.699219 240.425781 57.9375 240.902344 58.414062 C 241.378906 58.890625 241.617188 59.625 241.617188 60.625 L 241.617188 63.03125 C 241.617188 64.03125 241.378906 64.765625 240.902344 65.242188 C 240.425781 65.71875 239.699219 65.957031 238.714844 65.957031 L 235.835938 65.957031 L 235.835938 64.457031 L 236.585938 64.457031 L 236.585938 59.1875 L 235.835938 59.1875 Z M 235.835938 57.699219 "/>
+    <path style=" stroke:none;fill-rule:nonzero;fill:currentColor;" d="M 245.160156 57.699219 L 250.464844 57.699219 L 250.464844 59.1875 L 248.5625 59.1875 L 248.5625 64.46875 L 250.464844 64.46875 L 250.464844 65.957031 L 245.160156 65.957031 L 245.160156 64.46875 L 247.066406 64.46875 L 247.066406 59.1875 L 245.160156 59.1875 Z M 245.160156 57.699219 "/>
+    <path style=" stroke:none;fill-rule:nonzero;fill:currentColor;" d="M 256.84375 64.707031 C 257.113281 64.707031 257.339844 64.660156 257.523438 64.570312 C 257.703125 64.480469 257.851562 64.351562 257.964844 64.1875 C 258.078125 64.023438 258.15625 63.824219 258.203125 63.597656 C 258.25 63.371094 258.269531 63.117188 258.269531 62.84375 L 258.269531 60.8125 C 258.269531 60.554688 258.246094 60.3125 258.191406 60.082031 C 258.136719 59.855469 258.054688 59.65625 257.941406 59.496094 C 257.828125 59.328125 257.683594 59.195312 257.5 59.097656 C 257.320312 59 257.101562 58.949219 256.84375 58.949219 C 256.585938 58.949219 256.367188 59 256.1875 59.097656 C 256.003906 59.195312 255.859375 59.328125 255.746094 59.496094 C 255.628906 59.65625 255.546875 59.855469 255.496094 60.082031 C 255.441406 60.3125 255.414062 60.554688 255.414062 60.8125 L 255.414062 62.84375 C 255.414062 63.117188 255.4375 63.371094 255.484375 63.597656 C 255.527344 63.824219 255.609375 64.023438 255.722656 64.1875 C 255.835938 64.351562 255.980469 64.480469 256.164062 64.570312 C 256.34375 64.660156 256.570312 64.707031 256.84375 64.707031 M 253.921875 60.910156 C 253.921875 59.839844 254.179688 59.011719 254.695312 58.421875 C 255.214844 57.832031 255.929688 57.535156 256.84375 57.535156 C 257.757812 57.535156 258.472656 57.832031 258.988281 58.421875 C 259.507812 59.011719 259.765625 59.839844 259.765625 60.910156 L 259.765625 62.746094 C 259.765625 63.847656 259.507812 64.6875 258.988281 65.261719 C 258.472656 65.832031 257.757812 66.121094 256.84375 66.121094 C 255.929688 66.121094 255.214844 65.832031 254.695312 65.261719 C 254.179688 64.6875 253.921875 63.847656 253.921875 62.746094 Z M 253.921875 60.910156 "/>
+    </g>
+    </svg>
+  </div>
+  <div class="badge">Contract Client Pricing</div>
+</header>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-label">Instant Quote Generator</div>
+  <h1>Price your order<br><span>in seconds.</span></h1>
+  <p>Live pricing based on your quantity and design.<br>You supply the blanks — we handle the rest.</p>
+</div>
+
+<!-- ── LAYOUT ── -->
+<div class="layout">
+
+  <!-- LEFT: INPUTS -->
+  <div>
+
+    <!-- CLIENT INFO -->
+    <div class="card">
+      <div class="card-title">Your Information</div>
+      <div class="client-grid">
+        <div class="client-field">
+          <label class="client-label" for="clientName">Name <span class="req">*</span></label>
+          <input class="client-input" id="clientName" type="text" placeholder="First Last" oninput="this.classList.remove('invalid')">
+        </div>
+        <div class="client-field">
+          <label class="client-label" for="clientCompany">Company <span class="req">*</span></label>
+          <input class="client-input" id="clientCompany" type="text" placeholder="Brand or Organization" oninput="this.classList.remove('invalid')">
+        </div>
+        <div class="client-field">
+          <label class="client-label" for="clientPhone">Phone <span class="req">*</span></label>
+          <input class="client-input" id="clientPhone" type="tel" placeholder="(555) 000-0000" oninput="this.classList.remove('invalid')">
+        </div>
+        <div class="client-field">
+          <label class="client-label" for="clientEmail">Email <span class="req">*</span></label>
+          <input class="client-input" id="clientEmail" type="email" placeholder="you@example.com" oninput="this.classList.remove('invalid')">
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT TIMELINE -->
+    <div class="card">
+      <div class="card-title">Project Timeline</div>
+      <div class="date-flex-grid">
+        <div class="client-field">
+          <label class="client-label" for="dueDate">Due Date</label>
+          <input class="date-input" id="dueDate" type="date">
+        </div>
+        <div class="client-field">
+          <label class="client-label" for="flexibility">Flexibility</label>
+          <select class="date-input" id="flexibility">
+            <option value="">Select…</option>
+            <option value="firm">Firm — hard deadline</option>
+            <option value="flexible">Flexible — within a week</option>
+            <option value="whenever">Whenever — no rush</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUANTITY -->
+    <div class="card">
+      <div class="card-title">Quantity</div>
+      <div class="qty-wrapper">
+        <button class="qty-btn" onclick="adjustQty(-12)">−</button>
+        <input class="qty-input" type="number" id="qty" value="100" min="1" max="9999" oninput="calculate()">
+        <button class="qty-btn" onclick="adjustQty(12)">+</button>
+      </div>
+      <input type="range" class="qty-range" id="qtyRange" min="1" max="500" value="100" oninput="syncRange(this.value)">
+      <div class="qty-tiers">
+        <span>1</span><span>12</span><span>25</span><span>50</span><span>100</span><span>250</span><span>500+</span>
+      </div>
+      <div class="tier-indicator" id="tierIndicator">
+        <div class="tier-dot" id="tierDot"></div>
+        <div class="tier-text">Tier: <strong id="tierLabel">—</strong></div>
+      </div>
+    </div>
+
+    <!-- PRINT LOCATIONS -->
+    <div class="card">
+      <div class="card-title">Print Locations</div>
+      <div class="loc-blocks" id="locBlocks"></div>
+      <button class="add-loc-btn" id="addLocBtn" onclick="addLocation()">+ Add Print Location</button>
+    </div>
+
+    <!-- GARMENT DESCRIPTION -->
+    <div class="card">
+      <div class="card-title">Garment Description</div>
+      <div id="garmentRows"></div>
+      <button class="add-garment-btn" onclick="addGarment()">+ Add Garment Type</button>
+    </div>
+
+    <!-- ORDER TYPE -->
+    <div class="card">
+      <div class="card-title">Order Type</div>
+      <div class="toggle-row">
+        <div class="toggle-opt active" id="opt-firstrun" onclick="setOrderType('firstrun')">
+          First Run · $20 screen setup
+        </div>
+        <div class="toggle-opt" id="opt-reorder" onclick="setOrderType('reorder')">
+          Re-order · $12 screen setup
+        </div>
+      </div>
+    </div>
+
+    <!-- TURNAROUND -->
+    <div class="card">
+      <div class="card-title">Turnaround</div>
+      <div class="rush-grid">
+        <div class="rush-opt standard active" onclick="setRush('standard')" id="rush-standard">
+          <div class="rush-left">
+            <div class="rush-radio"></div>
+            <div>
+              <div class="rush-name">Standard</div>
+              <div class="rush-sub">10 business days</div>
+            </div>
+          </div>
+          <div class="rush-mult">× 1.0</div>
+        </div>
+        <div class="rush-opt oneweek" onclick="setRush('oneweek')" id="rush-oneweek">
+          <div class="rush-left">
+            <div class="rush-radio"></div>
+            <div>
+              <div class="rush-name">Rush — 1 Week</div>
+              <div class="rush-sub">5 business days</div>
+            </div>
+          </div>
+          <div class="rush-mult">× 1.45</div>
+        </div>
+        <div class="rush-opt twoday" onclick="setRush('twoday')" id="rush-twoday">
+          <div class="rush-left">
+            <div class="rush-radio"></div>
+            <div>
+              <div class="rush-name">Rush — 2–3 Days</div>
+              <div class="rush-sub">Expedited production</div>
+            </div>
+          </div>
+          <div class="rush-mult">× 2.0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADD-ONS -->
+    <div class="card">
+      <div class="card-title">Add-ons</div>
+      <div class="extras-list">
+
+        <div class="extra-item checked" id="extra-flash" data-fee="0.20" data-unit="piece" data-rushable="true" onclick="toggleExtra(this)">
+          <div class="extra-left">
+            <div class="extra-check">
+              <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <span class="extra-name">Flash Cure — for dark garments <span class="auto-tag">AUTO</span></span>
+          </div>
+          <span class="extra-price">+$0.20/pc</span>
+        </div>
+
+        <div class="extra-item" onclick="toggleExtra(this)" data-fee="0.75" data-unit="piece" data-rushable="true">
+          <div class="extra-left">
+            <div class="extra-check">
+              <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <span class="extra-name">Folding &amp; Poly Bagging</span>
+          </div>
+          <span class="extra-price">+$0.75/pc</span>
+        </div>
+
+        <div class="extra-item" onclick="toggleExtra(this)" data-fee="0.50" data-unit="piece" data-rushable="true">
+          <div class="extra-left">
+            <div class="extra-check">
+              <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <span class="extra-name">DTF Inner Label</span>
+          </div>
+          <span class="extra-price">+$0.50/pc</span>
+        </div>
+
+        <div class="extra-item" onclick="toggleExtra(this)" data-fee="0.20" data-unit="piece" data-rushable="false">
+          <div class="extra-left">
+            <div class="extra-check">
+              <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <span class="extra-name">Hang Tags Application</span>
+          </div>
+          <span class="extra-price">+$0.20/pc</span>
+        </div>
+
+        <!-- PMS COLOR MATCHING — expandable -->
+        <div class="extra-pms-wrap">
+          <div class="extra-item" id="extra-pms" onclick="togglePMS(this)" data-fee="20" data-unit="pms-color" data-rushable="false">
+            <div class="extra-left">
+              <div class="extra-check">
+                <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <span class="extra-name">PMS Color Matching</span>
+            </div>
+            <span class="extra-price" id="pmsPriceTag">+$20/color</span>
+          </div>
+          <div class="pms-expand" id="pmsExpand" style="display:none" onclick="event.stopPropagation()">
+            <div class="pms-count-row">
+              <span class="pms-count-label">Colors to match</span>
+              <div class="pms-count-ctrl">
+                <button class="pms-count-btn" onclick="adjustPMSCount(-1)">−</button>
+                <span class="pms-count-num" id="pmsCountDisplay">1</span>
+                <button class="pms-count-btn" onclick="adjustPMSCount(1)">+</button>
+              </div>
+            </div>
+            <div>
+              <div class="pms-field-label">Color Codes <span style="font-weight:400;opacity:.6;text-transform:none;letter-spacing:0">(PMS or HEX, comma-separated)</span></div>
+              <input class="pms-input" id="pmsColorsInput" type="text"
+                placeholder="e.g. PMS 485 C, PMS 286 C, #FF5500"
+                oninput="parsePMSColors()">
+              <div class="pms-tags" id="pmsTags"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FLEECE / SPECIAL HANDLING -->
+        <div class="extra-item" id="extra-fleece" onclick="toggleExtra(this)" data-fee="0.50" data-unit="piece" data-rushable="false">
+          <div class="extra-left">
+            <div class="extra-check">
+              <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <span class="extra-name">Fleece / Special Handling <span class="auto-tag" id="fleeceAutoTag" style="display:none">AUTO</span></span>
+          </div>
+          <span class="extra-price">+$0.50/pc</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PROJECT DESCRIPTION -->
+    <div class="card">
+      <div class="card-title">Project Description</div>
+      <textarea
+        class="desc-textarea"
+        id="projectDesc"
+        placeholder="Describe your project — garment style, colorways, special instructions, brand guidelines, delivery notes, etc."
+      ></textarea>
+    </div>
+
+    <!-- ART FILES -->
+    <div class="card">
+      <div class="card-title">Art Files</div>
+      <div class="art-upload-instructions">
+        Upload your art files to our secure drop folder below. Any filename is fine —
+        we'll match them up to the right print locations based on the descriptions
+        you add next to each location above.
+      </div>
+      <a class="art-upload-btn" href="https://sendtodrive.com/p/ESJDtCVMSl7Dkm2X" target="_blank" rel="noopener noreferrer">
+        Upload Art Files to Google Drive →
+      </a>
+      <div class="art-upload-sub">Accepted: AI · EPS · PDF · PNG · JPG · PSD · SVG · TIFF · Opens in new tab</div>
+      <div class="art-upload-checkbox-row">
+        <label class="art-upload-checkbox-label">
+          <input type="checkbox" id="artUploadedCheck">
+          <span>I've uploaded my art files</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- DELIVERY -->
+    <div class="card">
+      <div class="card-title">Delivery</div>
+      <div class="toggle-row">
+        <div class="toggle-opt active" id="ship-pickup" onclick="setShipping('pickup')">Pickup — Free</div>
+        <div class="toggle-opt" id="ship-ship" onclick="setShipping('ship')">Ship to Me — $30/box</div>
+      </div>
+      <div id="shippingEstRow" style="display:none">
+        <div class="shipping-est">
+          Est. <strong id="shippingBoxCount">—</strong> box(es) &rarr; <strong id="shippingEstCost">—</strong>
+          <div class="shipping-caveat">Actual shipping adjusted at order confirmation.</div>
+        </div>
+        <div id="addrSummary" class="addr-summary" style="display:none"></div>
+        <div class="addr-edit-link" id="addrEditLink" style="display:none" onclick="openAddressModal()">Edit address</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: RESULT -->
+  <div>
+    <div class="result-card">
+      <div class="result-header" id="resultHeader">
+        <div class="label">Per Piece</div>
+        <div class="price-big" id="perPiece">—</div>
+        <div class="price-sub">at <span id="qtyDisplay">100</span> pieces</div>
+      </div>
+      <div class="result-body">
+
+        <div class="breakdown-row">
+          <span class="lbl" id="brkPrintLabel">Print cost</span>
+          <span class="val" id="brkPrint">—</span>
+        </div>
+        <div class="breakdown-row" id="brkRushRow" style="display:none">
+          <span class="lbl" id="brkRushLabel">Rush</span>
+          <span class="val" id="brkRushVal">—</span>
+        </div>
+        <div class="breakdown-row">
+          <span class="lbl" id="brkScreenLabel">Screen setup</span>
+          <span class="val" id="brkScreens">—</span>
+        </div>
+        <div class="breakdown-row" id="brkPlatenRow" style="display:none">
+          <span class="lbl">Platen change</span>
+          <span class="val" id="brkPlaten">—</span>
+        </div>
+        <div class="breakdown-row" id="brkExtrasRow" style="display:none">
+          <span class="lbl">Add-ons</span>
+          <span class="val" id="brkExtras">—</span>
+        </div>
+        <div class="breakdown-row shipping-row" id="brkShippingRow" style="display:none">
+          <span class="lbl">Est. Shipping</span>
+          <span class="val" id="brkShipping">—</span>
+        </div>
+
+        <div class="breakdown-row total-row">
+          <span class="lbl">Total</span>
+          <span class="val" id="brkTotal">—</span>
+        </div>
+
+        <button class="cta-btn" onclick="sendQuote()">Send This Quote</button>
+        <p class="note-text">Print-only pricing · You supply the blanks<br>New Rochelle, NY · info@meshprintstudio.com<br><span class="note-disclaimer">This is just a guide — all pricing subject to final review and revision.</span></p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── FLOATING SUMMARY BAR ── -->
+<div class="float-bar" id="floatBar">
+  <div class="float-bar-left">
+    <div class="float-ppc-group">
+      <div class="float-label">Per Piece</div>
+      <div class="float-ppc" id="floatPpc">—</div>
+    </div>
+    <div class="float-divider"></div>
+    <div class="float-total-group">
+      <div class="float-label">Est. Total</div>
+      <div class="float-total" id="floatTotal">—</div>
+    </div>
+  </div>
+  <button class="float-cta" onclick="sendQuote()">Send This Quote →</button>
+</div>
+
+<script>
+  // ── CONTRACT 2026 MATRIX — 8 colors ──────────
+  const MATRIX = [
+    { min:    1, max:    11, label: '1–11 pcs',        rates: [5.35, 7.49, 9.62, 16.22, null,  null,  null,  null  ] },
+    { min:   12, max:    24, label: '12–24 pcs',        rates: [2.78, 4.14, 5.43,  7.22, 16.22, null,  null,  null  ] },
+    { min:   25, max:    49, label: '25–49 pcs',        rates: [2.07, 3.14, 4.18,  5.23,  6.34, 16.22, null,  null  ] },
+    { min:   50, max:    99, label: '50–99 pcs',        rates: [1.67, 2.63, 3.59,  4.54,  5.69,  6.69,  7.69,  8.69] },
+    { min:  100, max:   249, label: '100–249 pcs',      rates: [1.28, 2.15, 3.03,  3.90,  4.78,  5.66,  6.54,  7.42] },
+    { min:  250, max:   499, label: '250–499 pcs',      rates: [1.06, 1.68, 2.48,  3.12,  3.68,  4.16,  4.78,  5.40] },
+    { min:  500, max:   999, label: '500–999 pcs',      rates: [0.79, 1.32, 1.83,  2.36,  2.76,  3.29,  3.79,  4.29] },
+    { min: 1000, max:  2499, label: '1,000–2,499 pcs',  rates: [0.77, 1.06, 1.48,  2.02,  2.41,  3.07,  3.53,  3.99] },
+    { min: 2500, max: 99999, label: '2,500+ pcs',       rates: [0.74, 1.02, 1.44,  1.91,  2.25,  2.93,  3.37,  3.81] },
+  ];
+
+  const RUSH_MULT = { standard: 1.0, oneweek: 1.45, twoday: 2.0 };
+
+  const LOC_PRESETS = [
+    { key: 'front',     label: 'Front Chest', platen: false },
+    { key: 'back',      label: 'Full Back',    platen: false },
+    { key: 'sleeve',    label: 'Sleeve',       platen: true  },
+    { key: 'leftchest', label: 'Left Chest',   platen: false },
+    { key: 'other',     label: 'Other',        platen: false },
+  ];
+
+  const GARMENT_TYPES = [
+    { key: 'tee',        label: 'T-Shirt',             fleece: false },
+    { key: 'hoodie',     label: 'Hoodie',               fleece: true  },
+    { key: 'longsleeve', label: 'Long Sleeve',          fleece: false },
+    { key: 'sweatpants', label: 'Sweatpants',           fleece: true  },
+    { key: 'crewneck',   label: 'Crewneck',             fleece: true  },
+    { key: 'tank',       label: 'Tank Top',             fleece: false },
+    { key: 'other',      label: 'Other',                fleece: false },
+  ];
+
+  let garments         = [{ type: 'tee', desc: '' }];
+  let locIdCounter     = 1;
+  let locations        = [{ id: 1, preset: 'front', customName: '', colors: 2, fileName: '', file: null, printW: '', printH: '', drop: '' }];
+  let orderType        = 'firstrun';
+  let rushMode         = 'standard';
+  let shippingMode     = 'pickup';
+  let fleeceAutoActive = false;
+  let pmsColorCount    = 1;
+  let pmsColorList     = [];
+
+  // ── GARMENTS ──────────────────────────────────
+  function renderGarments() {
+    const container = document.getElementById('garmentRows');
+    container.innerHTML = '';
+    garments.forEach((g, idx) => {
+      const row = document.createElement('div');
+      row.className = 'garment-row';
+
+      const sel = document.createElement('select');
+      sel.className = 'garment-type-select';
+      GARMENT_TYPES.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.key;
+        opt.textContent = t.label;
+        if (t.key === g.type) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      sel.onchange = e => { garments[idx].type = e.target.value; detectFleece(); };
+
+      const descIn = document.createElement('input');
+      descIn.type = 'text';
+      descIn.className = 'garment-desc-input';
+      descIn.placeholder = 'Brand, style no., color, sizes…';
+      descIn.value = g.desc;
+      descIn.oninput = e => { garments[idx].desc = e.target.value; };
+
+      row.appendChild(sel);
+      row.appendChild(descIn);
+
+      if (garments.length > 1) {
+        const rm = document.createElement('button');
+        rm.className = 'garment-remove-btn';
+        rm.innerHTML = '&times;';
+        rm.title = 'Remove';
+        rm.onclick = () => { garments.splice(idx, 1); renderGarments(); detectFleece(); };
+        row.appendChild(rm);
+      }
+
+      container.appendChild(row);
+    });
+  }
+
+  function addGarment() {
+    garments.push({ type: 'tee', desc: '' });
+    renderGarments();
+  }
+
+  // ── RENDER LOCATION BLOCKS ────────────────────
+  function renderLocations() {
+    const qty  = parseInt(document.getElementById('qty').value) || 1;
+    const tier = getTier(qty);
+    const container = document.getElementById('locBlocks');
+    container.innerHTML = '';
+
+    locations.forEach((loc, idx) => {
+      while (loc.colors > 1 && tier.rates[loc.colors - 1] === null) loc.colors--;
+
+      const block = document.createElement('div');
+      block.className = 'loc-block';
+
+      const header = document.createElement('div');
+      header.className = 'loc-block-header';
+      const num = document.createElement('div');
+      num.className = 'loc-block-num';
+      num.textContent = 'Location ' + (idx + 1);
+      header.appendChild(num);
+      if (locations.length > 1) {
+        const rm = document.createElement('button');
+        rm.className = 'loc-remove-btn';
+        rm.title = 'Remove';
+        rm.innerHTML = '&times;';
+        rm.onclick = () => removeLoc(loc.id);
+        header.appendChild(rm);
+      }
+      block.appendChild(header);
+
+      const body = document.createElement('div');
+      body.className = 'loc-block-body';
+
+      const presetRow = document.createElement('div');
+      presetRow.className = 'loc-preset-row';
+      LOC_PRESETS.forEach(p => {
+        const btn = document.createElement('div');
+        const isActive = loc.preset === p.key;
+        btn.className = 'preset-btn' + (isActive ? ' active' + (p.platen ? ' platen' : '') : '');
+        if (p.platen) {
+          btn.innerHTML = p.label + ' <span class="platen-tag">+$0.20/pc</span>';
+        } else {
+          btn.textContent = p.label;
+        }
+        btn.onclick = () => setLocPreset(loc.id, p.key);
+        presetRow.appendChild(btn);
+      });
+      body.appendChild(presetRow);
+
+      if (loc.preset === 'other') {
+        const otherIn = document.createElement('input');
+        otherIn.type = 'text';
+        otherIn.className = 'loc-other-input';
+        otherIn.placeholder = 'Describe location (e.g. Hood, Right Chest, Leg…)';
+        otherIn.value = loc.customName;
+        otherIn.oninput = e => { loc.customName = e.target.value; };
+        body.appendChild(otherIn);
+      }
+
+      const fileRow = document.createElement('div');
+      fileRow.className = 'loc-file-row';
+
+      const fileLbl = document.createElement('div');
+      fileLbl.className = 'loc-file-label';
+      fileLbl.textContent = 'File Ref';
+
+      const fileRefInfo = document.createElement('span');
+      fileRefInfo.className = 'info-icon';
+      fileRefInfo.setAttribute('tabindex', '0');
+      fileRefInfo.setAttribute('data-tip', "A short description of the art for this location (e.g. 'Shirt front graphic'). This helps us match your uploaded files to the right print location.");
+      fileRefInfo.textContent = 'i';
+
+      const fileRefInput = document.createElement('input');
+      fileRefInput.type = 'text';
+      fileRefInput.className = 'loc-file-ref-input';
+      fileRefInput.placeholder = 'optional — e.g. Shirt Front Graphic';
+      fileRefInput.value = loc.fileName || '';
+      fileRefInput.oninput = e => { loc.fileName = e.target.value; };
+
+      fileRow.appendChild(fileLbl);
+      fileRow.appendChild(fileRefInfo);
+      fileRow.appendChild(fileRefInput);
+
+      body.appendChild(fileRow);
+
+      // Dimensions row
+      const dimRow = document.createElement('div');
+      dimRow.className = 'loc-dim-row';
+
+      const mkDimLabel = txt => { const d = document.createElement('div'); d.className = 'loc-dim-label'; d.textContent = txt; return d; };
+      const mkDimInput = (placeholder, val, cb) => {
+        const i = document.createElement('input');
+        i.type = 'number'; i.min = '0'; i.step = '0.25';
+        i.className = 'loc-dim-input'; i.placeholder = placeholder; i.value = val;
+        i.oninput = e => cb(e.target.value);
+        return i;
+      };
+      const mkSep = txt => { const s = document.createElement('span'); s.className = 'loc-dim-sep'; s.textContent = txt; return s; };
+      const mkUnit = () => { const u = document.createElement('span'); u.className = 'loc-dim-unit'; u.textContent = 'in'; return u; };
+      const spacer = document.createElement('div'); spacer.style.flex = '1';
+
+      dimRow.appendChild(mkDimLabel('Print Size'));
+      dimRow.appendChild(mkDimInput('W', loc.printW, v => { loc.printW = v; }));
+      dimRow.appendChild(mkSep('×'));
+      dimRow.appendChild(mkDimInput('H', loc.printH, v => { loc.printH = v; }));
+      dimRow.appendChild(mkUnit());
+      dimRow.appendChild(spacer);
+
+      const dropLabelWrap = document.createElement('div');
+      dropLabelWrap.style.cssText = 'display:flex;align-items:center;gap:3px;flex-shrink:0';
+      dropLabelWrap.appendChild(mkDimLabel('Drop'));
+      const infoIcon = document.createElement('span');
+      infoIcon.className = 'info-icon';
+      infoIcon.textContent = 'i';
+      infoIcon.dataset.tip = 'Measured from the collar seamline straight down to the top edge of the print. Standard front chest placement is typically 2.75–3″.';
+      dropLabelWrap.appendChild(infoIcon);
+      dimRow.appendChild(dropLabelWrap);
+
+      dimRow.appendChild(mkDimInput('—', loc.drop, v => { loc.drop = v; }));
+      dimRow.appendChild(mkUnit());
+      body.appendChild(dimRow);
+
+      const colLbl = document.createElement('div');
+      colLbl.className = 'loc-colors-label';
+      colLbl.textContent = 'Ink Colors';
+      body.appendChild(colLbl);
+
+      const colorRow = document.createElement('div');
+      colorRow.className = 'loc-color-row';
+      for (let c = 1; c <= 8; c++) {
+        const available = tier.rates[c - 1] !== null;
+        const cb = document.createElement('div');
+        cb.className = 'lc-btn' + (c === loc.colors ? ' active' : '') + (!available ? ' unavail' : '');
+        cb.textContent = c + (c >= 7 ? '✦' : 'C');
+        if (available) cb.onclick = () => { loc.colors = c; renderLocations(); calculate(); };
+        colorRow.appendChild(cb);
+      }
+      body.appendChild(colorRow);
+
+      block.appendChild(body);
+      container.appendChild(block);
+    });
+
+    const addBtn = document.getElementById('addLocBtn');
+    if (locations.length >= 4) {
+      addBtn.disabled = true;
+      addBtn.textContent = 'Max 4 locations reached';
+    } else {
+      addBtn.disabled = false;
+      addBtn.textContent = '+ Add Print Location';
+    }
+  }
+
+  function addLocation() {
+    if (locations.length >= 4) return;
+    locIdCounter++;
+    locations.push({ id: locIdCounter, preset: 'front', customName: '', colors: 1, fileName: '', file: null, printW: '', printH: '', drop: '' });
+    renderLocations();
+    calculate();
+  }
+
+  function removeLoc(id) {
+    if (locations.length <= 1) return;
+    locations = locations.filter(l => l.id !== id);
+    renderLocations();
+    calculate();
+  }
+
+  function setLocPreset(id, preset) {
+    const loc = locations.find(l => l.id === id);
+    if (loc) { loc.preset = preset; renderLocations(); calculate(); }
+  }
+
+  // ── ORDER TYPE ────────────────────────────────
+  function setOrderType(type) {
+    orderType = type;
+    document.getElementById('opt-firstrun').classList.toggle('active', type === 'firstrun');
+    document.getElementById('opt-reorder').classList.toggle('active', type === 'reorder');
+    calculate();
+  }
+
+  // ── RUSH ──────────────────────────────────────
+  function setRush(mode) {
+    rushMode = mode;
+    ['standard','oneweek','twoday'].forEach(m => {
+      document.getElementById('rush-' + m).classList.toggle('active', m === mode);
+    });
+    calculate();
+  }
+
+  // ── PMS COLOR MATCHING ────────────────────────
+  function togglePMS(el) {
+    if (el.classList.contains('locked')) return;
+    el.classList.toggle('checked');
+    const expand = document.getElementById('pmsExpand');
+    expand.style.display = el.classList.contains('checked') ? 'block' : 'none';
+    calculate();
+  }
+
+  function adjustPMSCount(delta) {
+    pmsColorCount = Math.max(1, Math.min(12, pmsColorCount + delta));
+    document.getElementById('pmsCountDisplay').textContent = pmsColorCount;
+    updatePMSPrice();
+    calculate();
+  }
+
+  function parsePMSColors() {
+    const val = document.getElementById('pmsColorsInput').value;
+    pmsColorList = val.split(',').map(s => s.trim()).filter(Boolean);
+    if (pmsColorList.length > 0) {
+      pmsColorCount = pmsColorList.length;
+      document.getElementById('pmsCountDisplay').textContent = pmsColorCount;
+    }
+    renderPMSTags();
+    updatePMSPrice();
+    calculate();
+  }
+
+  function renderPMSTags() {
+    const container = document.getElementById('pmsTags');
+    container.innerHTML = pmsColorList.map(c => `<span class="pms-tag">${c}</span>`).join('');
+  }
+
+  function updatePMSPrice() {
+    const total = 20 * pmsColorCount;
+    document.getElementById('pmsPriceTag').textContent =
+      pmsColorCount === 1 ? '+$20/color' : `+$${total} (${pmsColorCount}×$20)`;
+  }
+
+  // ── SHIPPING ──────────────────────────────────
+  let shippingAddress = { name: '', street: '', apt: '', city: '', state: '', zip: '' };
+
+  function setShipping(mode) {
+    shippingMode = mode;
+    document.getElementById('ship-pickup').classList.toggle('active', mode === 'pickup');
+    document.getElementById('ship-ship').classList.toggle('active', mode === 'ship');
+    if (mode === 'ship') openAddressModal();
+    calculate();
+  }
+
+  function openAddressModal() {
+    document.getElementById('addrName').value   = shippingAddress.name;
+    document.getElementById('addrStreet').value = shippingAddress.street;
+    document.getElementById('addrApt').value    = shippingAddress.apt;
+    document.getElementById('addrCity').value   = shippingAddress.city;
+    document.getElementById('addrState').value  = shippingAddress.state;
+    document.getElementById('addrZip').value    = shippingAddress.zip;
+    document.getElementById('addressModal').style.display = 'flex';
+  }
+
+  function closeAddressModal() {
+    document.getElementById('addressModal').style.display = 'none';
+  }
+
+  function saveAddress() {
+    shippingAddress.name   = document.getElementById('addrName').value.trim();
+    shippingAddress.street = document.getElementById('addrStreet').value.trim();
+    shippingAddress.apt    = document.getElementById('addrApt').value.trim();
+    shippingAddress.city   = document.getElementById('addrCity').value.trim();
+    shippingAddress.state  = document.getElementById('addrState').value.trim();
+    shippingAddress.zip    = document.getElementById('addrZip').value.trim();
+    closeAddressModal();
+    updateAddrSummary();
+  }
+
+  function updateAddrSummary() {
+    const s = shippingAddress;
+    const hasAddr = s.street || s.city;
+    const summaryEl   = document.getElementById('addrSummary');
+    const editLinkEl  = document.getElementById('addrEditLink');
+    if (hasAddr) {
+      const line1 = [s.name, s.street, s.apt].filter(Boolean).join(', ');
+      const line2 = [s.city, s.state, s.zip].filter(Boolean).join(' ');
+      summaryEl.innerHTML = `<strong style="color:var(--text-mid)">${line1}</strong>${line2 ? '<br>' + line2 : ''}`;
+      summaryEl.style.display = '';
+      editLinkEl.style.display = '';
+    } else {
+      summaryEl.style.display  = 'none';
+      editLinkEl.style.display = 'none';
+    }
+  }
+
+  // ── FLEECE AUTO-DETECT ────────────────────────
+  function detectFleece() {
+    const fleeceKeys = new Set(GARMENT_TYPES.filter(t => t.fleece).map(t => t.key));
+    const descStr    = garments.map(g => g.desc).join(' ').toLowerCase();
+    const keywords   = ['hoodie', 'hoody', 'sweatshirt', 'crewneck', 'crew neck', 'fleece', 'pullover', 'zip-up', 'zipper', 'zip up'];
+    const styleNums  = ['18500', '18000', 'ss3000', 'ss4500', 'p170', 'pc90', 'sf76', 'sf400', 'g185', 'g186'];
+    const detected   = garments.some(g => fleeceKeys.has(g.type))
+                    || keywords.some(k => descStr.includes(k))
+                    || styleNums.some(k => descStr.includes(k));
+    const fleeceEl  = document.getElementById('extra-fleece');
+    const fleeceTag = document.getElementById('fleeceAutoTag');
+    if (detected && !fleeceAutoActive) {
+      fleeceAutoActive = true;
+      fleeceEl.classList.add('checked');
+      fleeceTag.style.display = '';
+    } else if (!detected && fleeceAutoActive) {
+      fleeceAutoActive = false;
+      fleeceEl.classList.remove('checked');
+      fleeceTag.style.display = 'none';
+    }
+    calculate();
+  }
+
+  // ── EXTRAS ────────────────────────────────────
+  function toggleExtra(el) {
+    if (el.classList.contains('locked')) return;
+    el.classList.toggle('checked');
+    calculate();
+  }
+
+  // ── QTY ───────────────────────────────────────
+  function adjustQty(delta) {
+    const input = document.getElementById('qty');
+    const val = Math.max(1, Math.min(9999, parseInt(input.value || 1) + delta));
+    input.value = val;
+    document.getElementById('qtyRange').value = Math.min(val, 500);
+    calculate();
+  }
+  function syncRange(val) {
+    document.getElementById('qty').value = val;
+    calculate();
+  }
+
+  // ── HELPERS ───────────────────────────────────
+  function getTier(qty) {
+    for (const t of MATRIX) if (qty >= t.min && qty <= t.max) return t;
+    return MATRIX[MATRIX.length - 1];
+  }
+  function fmt(n)    { return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+  function fmtInt(n) { return '$' + Math.round(n).toLocaleString(); }
+
+  // ── CORE CALCULATION ──────────────────────────
+  function calculate() {
+    const qty = parseInt(document.getElementById('qty').value) || 1;
+    document.getElementById('qtyDisplay').textContent = qty.toLocaleString();
+    document.getElementById('qtyRange').value = Math.min(qty, 500);
+
+    const tier = getTier(qty);
+    document.getElementById('tierLabel').textContent = tier.label;
+
+    renderLocations();
+
+    const numLocs = locations.length;
+
+    let basePrintCost = 0;
+    let platenChangeLocs = 0;
+    locations.forEach(loc => {
+      const rate = tier.rates[loc.colors - 1] || 0;
+      basePrintCost += rate * qty;
+      const preset = LOC_PRESETS.find(p => p.key === loc.preset);
+      if (preset && preset.platen) platenChangeLocs++;
+    });
+
+    const rushMultiplier  = RUSH_MULT[rushMode];
+    const rushedPrintCost = basePrintCost * rushMultiplier;
+    const rushAdder       = rushedPrintCost - basePrintCost;
+
+    const screenFee   = orderType === 'reorder' ? 12 : 20;
+    const totalScreens = locations.reduce((sum, loc) => sum + loc.colors, 0);
+    const screenCost  = screenFee * totalScreens;
+
+    const platenCost = 0.20 * qty * platenChangeLocs;
+
+    const colorsForExtras = locations[0] ? locations[0].colors : 1;
+    let extrasCost = 0;
+    document.querySelectorAll('.extra-item.checked').forEach(ex => {
+      const fee      = parseFloat(ex.dataset.fee);
+      const unit     = ex.dataset.unit;
+      const rushable = ex.dataset.rushable === 'true';
+      let lineCost   = unit === 'piece'     ? fee * qty :
+                       unit === 'pms-color' ? fee * pmsColorCount :
+                       fee * colorsForExtras;
+      if (rushable) lineCost *= rushMultiplier;
+      extrasCost += lineCost;
+    });
+
+    // Shipping
+    const isFleece     = document.getElementById('extra-fleece').classList.contains('checked');
+    const perBox       = isFleece ? 20 : 72;
+    const numBoxes     = Math.ceil(qty / perBox);
+    const shippingCost = shippingMode === 'ship' ? numBoxes * 30 : 0;
+
+    const total    = rushedPrintCost + screenCost + platenCost + extrasCost + shippingCost;
+    const perPiece = total / qty;
+
+    // Update display
+    document.getElementById('perPiece').textContent = fmt(perPiece);
+    document.getElementById('brkPrintLabel').textContent =
+      numLocs > 1
+        ? `Print (${numLocs} locations, ${qty.toLocaleString()} pcs)`
+        : `Print (${fmt(tier.rates[locations[0].colors - 1] || 0)}/pc × ${qty.toLocaleString()})`;
+    document.getElementById('brkPrint').textContent = fmt(basePrintCost);
+
+    const rushRow = document.getElementById('brkRushRow');
+    if (rushMultiplier > 1) {
+      rushRow.style.display = 'flex';
+      rushRow.className = 'breakdown-row rush-row' + (rushMode === 'twoday' ? ' danger' : '');
+      document.getElementById('brkRushLabel').textContent =
+        rushMode === 'oneweek' ? 'Rush ×1.45 applied' : 'Rush ×2.0 applied';
+      document.getElementById('brkRushVal').textContent = '+' + fmt(rushAdder);
+    } else {
+      rushRow.style.display = 'none';
+    }
+
+    document.getElementById('brkScreenLabel').textContent =
+      `Screen setup ($${screenFee} × ${totalScreens} screen${totalScreens !== 1 ? 's' : ''})`;
+    document.getElementById('brkScreens').textContent = fmt(screenCost);
+
+    const platenRow = document.getElementById('brkPlatenRow');
+    platenRow.style.display = platenCost > 0 ? 'flex' : 'none';
+    if (platenCost > 0) document.getElementById('brkPlaten').textContent = fmt(platenCost);
+
+    const extrasRow = document.getElementById('brkExtrasRow');
+    extrasRow.style.display = extrasCost > 0 ? 'flex' : 'none';
+    if (extrasCost > 0) document.getElementById('brkExtras').textContent = fmt(extrasCost);
+
+    // Shipping row
+    const shippingRow    = document.getElementById('brkShippingRow');
+    const shippingEstRow = document.getElementById('shippingEstRow');
+    if (shippingMode === 'ship') {
+      shippingRow.style.display = 'flex';
+      document.getElementById('brkShipping').textContent = fmt(shippingCost) + ' est.';
+      shippingEstRow.style.display = 'block';
+      document.getElementById('shippingBoxCount').textContent = numBoxes;
+      document.getElementById('shippingEstCost').textContent  = fmt(shippingCost);
+    } else {
+      shippingRow.style.display    = 'none';
+      shippingEstRow.style.display = 'none';
+    }
+
+    document.getElementById('brkTotal').textContent = fmtInt(total);
+
+    // Sync floating bar
+    document.getElementById('floatPpc').textContent   = fmt(perPiece);
+    document.getElementById('floatTotal').textContent = fmtInt(total);
+
+    const hdr = document.getElementById('resultHeader');
+    hdr.className = 'result-header' +
+      (rushMode === 'oneweek' ? ' rush-1' : rushMode === 'twoday' ? ' rush-2' : '');
+
+    const anyInvalid = locations.some(loc => tier.rates[loc.colors - 1] === null);
+    document.getElementById('tierDot').style.background = anyInvalid ? 'var(--brick)' : '#4a7c59';
+  }
+
+  // ── SEND QUOTE ────────────────────────────────
+  function sendQuote() {
+    const requiredIds = ['clientName', 'clientCompany', 'clientPhone', 'clientEmail'];
+    let allValid = true;
+    requiredIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el.value.trim()) { el.classList.add('invalid'); allValid = false; }
+      else { el.classList.remove('invalid'); }
+    });
+    if (!allValid) {
+      document.getElementById('clientName').closest('.card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+
+    const clientName    = document.getElementById('clientName').value.trim();
+    const clientCompany = document.getElementById('clientCompany').value.trim();
+    const clientPhone   = document.getElementById('clientPhone').value.trim();
+    const clientEmail   = document.getElementById('clientEmail').value.trim();
+
+    const qty         = document.getElementById('qty').value;
+    const tot         = document.getElementById('brkTotal').textContent;
+    const ppc         = document.getElementById('perPiece').textContent;
+    const type        = orderType === 'reorder' ? 'Re-order' : 'First Run';
+    const rush        = { standard: 'Standard (10 business days)', oneweek: 'Rush 1 Week', twoday: 'Rush 2–3 Days' }[rushMode];
+    const garment     = garments.map(g => {
+      const t = GARMENT_TYPES.find(t => t.key === g.type);
+      return (t ? t.label : g.type) + (g.desc ? ` — ${g.desc}` : '');
+    }).join(', ');
+    const desc        = document.getElementById('projectDesc').value.trim();
+    const dueDate     = document.getElementById('dueDate').value;
+    const flexibility = document.getElementById('flexibility').value;
+    const flexMap     = { firm: 'Firm — hard deadline', flexible: 'Flexible — within a week', whenever: 'Whenever — no rush' };
+
+    const isFleece2  = document.getElementById('extra-fleece').classList.contains('checked');
+    const perBox2    = isFleece2 ? 20 : 72;
+    const numBoxes2  = Math.ceil(parseInt(qty) / perBox2);
+    const addrParts  = [
+      shippingAddress.name,
+      shippingAddress.street,
+      shippingAddress.apt,
+      [shippingAddress.city, shippingAddress.state].filter(Boolean).join(', '),
+      shippingAddress.zip
+    ].filter(Boolean);
+    const shipLine   = shippingMode === 'ship'
+      ? `Shipping: Est. ${numBoxes2} box(es) — ~$${(numBoxes2 * 30).toFixed(0)} (adjusted at confirmation)` +
+        (addrParts.length ? `%0AShip to: ${addrParts.join(', ')}` : '')
+      : 'Delivery: Pickup';
+
+    const pmsChecked = document.getElementById('extra-pms').classList.contains('checked');
+    const pmsLine    = pmsChecked
+      ? `PMS Matching: ${pmsColorCount} color${pmsColorCount > 1 ? 's' : ''}${pmsColorList.length ? ' — ' + pmsColorList.join(', ') : ''}`
+      : '';
+
+    const locsStr = locations.map((loc, i) => {
+      const preset  = LOC_PRESETS.find(p => p.key === loc.preset);
+      const locName = loc.preset === 'other'
+        ? (loc.customName || 'Other (unspecified)')
+        : preset.label;
+      const fileTag = loc.fileName ? ` [${loc.fileName}]` : '';
+      const sizeTag = (loc.printW && loc.printH) ? ` ${loc.printW}″×${loc.printH}″` : '';
+      const dropTag = loc.drop ? `, drop ${loc.drop}″` : '';
+      return `  Location ${i+1}: ${locName} — ${loc.colors} color${loc.colors > 1 ? 's' : ''}${sizeTag}${dropTag}${fileTag}`;
+    }).join('%0A');
+
+    const artUploaded = document.getElementById('artUploadedCheck').checked;
+    const artStatus = artUploaded
+      ? '  ✓ Client confirmed art files were uploaded'
+      : '  ⚠ Client did NOT confirm upload — please verify before proceeding';
+
+    const body = [
+      'Hi David,',
+      '',
+      "Here's my order:",
+      '',
+      `Name: ${clientName}`,
+      `Company: ${clientCompany}`,
+      `Phone: ${clientPhone}`,
+      `Email: ${clientEmail}`,
+      '',
+      `Qty: ${qty}`,
+      garment     ? `Garment: ${garment}`                            : '',
+      dueDate     ? `Due Date: ${dueDate}`                           : '',
+      flexibility ? `Flexibility: ${flexMap[flexibility] || flexibility}` : '',
+      `Order Type: ${type}`,
+      `Turnaround: ${rush}`,
+      '',
+      'Print Locations:',
+      decodeURIComponent(locsStr),
+      '',
+      `Estimated Total: ${tot} (${ppc}/pc)`,
+      pmsLine,
+      shipLine,
+      desc ? `\nProject Notes:\n${desc}\n` : '',
+      'Art Files:',
+      '  Upload link: https://sendtodrive.com/p/ESJDtCVMSl7Dkm2X',
+      artStatus,
+      '  (See file references per location above)',
+      '',
+      'Please confirm and let me know next steps.',
+    ].filter(line => line !== '').join('\n');
+
+    const subject = `Quote — ${clientName} / ${clientCompany} — ${qty} pcs`;
+    window.location.href = `mailto:info@meshprintstudio.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }
+
+  // ── INIT ──────────────────────────────────────
+  renderGarments();
+  renderLocations();
+  calculate();
+
+  // Float bar: show when result card scrolls out of view
+  const floatBar   = document.getElementById('floatBar');
+  const resultCard = document.querySelector('.result-card');
+  const observer   = new IntersectionObserver(
+    entries => {
+      entries.forEach(e => floatBar.classList.toggle('visible', !e.isIntersecting));
+    },
+    { threshold: 0.2 }
+  );
+  observer.observe(resultCard);
+</script>
+
+<!-- SHIPPING ADDRESS MODAL -->
+<div class="modal-overlay" id="addressModal" style="display:none" onclick="closeAddressModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title">Shipping Address</div>
+      <button class="modal-close" onclick="closeAddressModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="addr-field-group">
+        <label class="addr-label">Full Name / Company</label>
+        <input class="addr-input" id="addrName" type="text" placeholder="e.g. Jane Smith / Acme Co.">
+      </div>
+      <div class="addr-field-group">
+        <label class="addr-label">Street Address</label>
+        <input class="addr-input" id="addrStreet" type="text" placeholder="123 Main St">
+      </div>
+      <div class="addr-field-group">
+        <label class="addr-label">Apt / Suite / Unit <span style="opacity:.6;font-weight:400;text-transform:none">(optional)</span></label>
+        <input class="addr-input" id="addrApt" type="text" placeholder="Suite 4B">
+      </div>
+      <div class="addr-row-3">
+        <div class="addr-field-group">
+          <label class="addr-label">City</label>
+          <input class="addr-input" id="addrCity" type="text" placeholder="City">
+        </div>
+        <div class="addr-field-group addr-state">
+          <label class="addr-label">State</label>
+          <input class="addr-input" id="addrState" type="text" placeholder="CA" maxlength="2">
+        </div>
+        <div class="addr-field-group">
+          <label class="addr-label">ZIP</label>
+          <input class="addr-input" id="addrZip" type="text" placeholder="90210" maxlength="10">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-save-btn" onclick="saveAddress()">Save Address</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
