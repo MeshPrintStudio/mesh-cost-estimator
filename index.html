@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mesh Print Studio — Contract Pricing</title>
+  <title>Mesh Print Studio — Retail Printing Calculator</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600;700&display=swap');
 
@@ -750,6 +750,216 @@
     /* ── DIVIDER LINE ── */
     .section-divider { height: 1px; background: var(--border); margin: 6px 0 18px; }
 
+    /* ── CATALOG INTRO ── */
+    .catalog-intro {
+      background: var(--forest-dark); border: 1px solid var(--border);
+      border-left: 3px solid var(--tan); border-radius: 6px;
+      padding: 13px 16px; margin-bottom: 16px;
+      font-size: 12.5px; color: var(--text-mid); line-height: 1.6;
+    }
+    .catalog-intro strong { color: var(--cream); }
+    .catalog-intro-links {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 11px;
+    }
+    .catalog-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px; background: var(--brick);
+      color: var(--cream); text-decoration: none;
+      border-radius: 5px; font-size: 11px; font-weight: 700;
+      font-family: 'Barlow Condensed', sans-serif;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .catalog-link:hover { background: var(--brick-light); }
+    .catalog-link:active { transform: translateY(1px); }
+    .catalog-link .arrow { font-size: 13px; line-height: 1; }
+
+    /* ── GARMENT CATALOG ── */
+    .cat-filter-row {
+      display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;
+    }
+    .cat-chip {
+      padding: 6px 13px; background: var(--forest-dark);
+      border: 1.5px solid var(--border); border-radius: 20px;
+      color: var(--text-muted); font-size: 11px; font-weight: 700;
+      font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px;
+      text-transform: uppercase; cursor: pointer; transition: all 0.15s;
+    }
+    .cat-chip:hover { border-color: var(--border-dark); color: var(--tan); }
+    .cat-chip.active { background: var(--brick); border-color: var(--brick-dark); color: var(--cream); }
+    .garment-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+      gap: 10px;
+    }
+    .garment-card {
+      background: var(--forest-dark); border: 1.5px solid var(--border);
+      border-radius: 8px; padding: 26px 12px 12px;
+      cursor: pointer; transition: all 0.15s; position: relative;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .gc-view-link {
+      position: absolute; top: 6px; right: 6px;
+      font-size: 9px; color: var(--text-muted);
+      text-decoration: none; padding: 3px 7px;
+      background: rgba(0,0,0,0.35); border: 1px solid var(--border);
+      border-radius: 3px; font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
+      transition: all 0.15s; z-index: 2;
+      display: inline-flex; align-items: center; gap: 3px;
+    }
+    .gc-view-link:hover { color: var(--tan); border-color: var(--tan-dark); background: rgba(0,0,0,0.55); }
+    .garment-card:hover { border-color: var(--border-dark); }
+    .garment-card.selected {
+      border-color: var(--brick); background: #2a1512;
+      box-shadow: 0 0 0 2px rgba(126,38,26,0.3);
+    }
+    .gc-brand {
+      font-size: 9px; font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+      color: var(--tan);
+    }
+    .gc-name {
+      font-size: 13px; color: var(--text-mid); font-weight: 700;
+      line-height: 1.25;
+    }
+    .gc-style {
+      font-size: 10px; color: var(--text-muted); font-weight: 500;
+      font-family: 'Menlo', 'Monaco', monospace;
+    }
+    .gc-price {
+      font-size: 14px; color: var(--cream); font-weight: 800;
+      font-family: 'Barlow Condensed', sans-serif; margin-top: 3px;
+      letter-spacing: 0.3px;
+    }
+    .gc-price .from { font-size: 9px; color: var(--text-muted); font-weight: 600;
+      font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px;
+      text-transform: uppercase; margin-right: 3px; }
+    .garment-card.selected .gc-price { color: var(--tan); }
+    .garment-selected-summary {
+      margin-top: 14px; padding: 12px 14px;
+      background: var(--forest-dark); border: 1px solid var(--border);
+      border-left: 3px solid var(--brick); border-radius: 6px;
+      font-size: 12px; color: var(--text-mid); line-height: 1.55;
+    }
+    .garment-selected-summary strong { color: var(--cream); }
+    .garment-selected-summary .gsm-price { color: var(--tan); font-weight: 700; }
+    .garment-note {
+      margin-top: 10px; font-size: 11px; color: var(--text-muted);
+      font-style: italic; line-height: 1.5;
+    }
+    .color-picker-label {
+      font-size: 10px; font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--text-muted); margin-top: 11px; margin-bottom: 7px;
+    }
+    .color-chips {
+      display: flex; flex-wrap: wrap; gap: 6px;
+    }
+    .color-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 11px 5px 5px;
+      background: var(--forest-mid); border: 1.5px solid var(--border);
+      border-radius: 20px; cursor: pointer;
+      font-size: 11px; color: var(--text-muted); font-weight: 600;
+      font-family: 'Barlow', sans-serif;
+      transition: all 0.15s;
+    }
+    .color-chip:hover { border-color: var(--border-dark); color: var(--tan); }
+    .color-chip.active {
+      border-color: var(--brick-light); color: var(--cream);
+      background: #2a1512;
+      box-shadow: 0 0 0 1.5px rgba(163,48,32,0.35);
+    }
+    .color-swatch {
+      width: 14px; height: 14px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0;
+      box-shadow: inset 0 0 0 0.5px rgba(0,0,0,0.4);
+    }
+    .color-swatch-other {
+      background: repeating-linear-gradient(45deg,
+        var(--tan) 0 4px, var(--forest-dark) 4px 8px);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 9px; font-weight: 800; color: var(--cream);
+    }
+    .color-chip-other { border-style: dashed; }
+    .garment-card-other {
+      border-style: dashed;
+      border-color: var(--tan-dark);
+      background: linear-gradient(135deg, rgba(217,179,128,0.06), rgba(47,53,43,0.4));
+    }
+    .garment-card-other .gc-brand { color: var(--tan); }
+    .garment-card-other.selected {
+      border-style: solid; border-color: var(--tan);
+      background: #2a2419;
+      box-shadow: 0 0 0 2px rgba(217,179,128,0.35);
+    }
+    .result-card.form-only .price-big,
+    .result-card.form-only #brkTotal,
+    .result-card.form-only .breakdown-row:not(.keep-in-form-mode) {
+      opacity: 0.25; filter: blur(2px); pointer-events: none;
+    }
+    .form-mode-banner {
+      margin: 10px 0 14px; padding: 11px 13px;
+      background: rgba(217,179,128,0.1); border: 1px dashed var(--tan-dark);
+      border-radius: 6px; font-size: 12px; color: var(--tan);
+      line-height: 1.5; display: none;
+    }
+    .result-card.form-only .form-mode-banner { display: block; }
+    .color-note {
+      margin-top: 8px; font-size: 10.5px; color: var(--text-muted);
+      font-style: italic; line-height: 1.5;
+    }
+
+    /* ── SIZE BREAKDOWN ── */
+    .size-grid {
+      display: grid; grid-template-columns: repeat(9, 1fr); gap: 6px;
+    }
+    @media (max-width: 560px) { .size-grid { grid-template-columns: repeat(5, 1fr); } }
+    .size-cell { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .size-lbl {
+      font-size: 10px; font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800; color: var(--text-muted); letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .size-upcharge {
+      font-size: 8px; color: var(--tan); font-weight: 700;
+      font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.3px;
+      height: 10px; line-height: 1;
+    }
+    .size-input {
+      width: 100%; background: var(--forest-dark);
+      border: 1.5px solid var(--border); border-radius: 5px;
+      color: var(--cream); font-size: 14px; font-weight: 700;
+      font-family: 'Barlow Condensed', sans-serif;
+      text-align: center; padding: 7px 2px; outline: none;
+      transition: border-color 0.15s; -moz-appearance: textfield;
+    }
+    .size-input::-webkit-inner-spin-button,
+    .size-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+    .size-input:focus { border-color: var(--brick); }
+    .size-summary {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 12px; padding: 10px 13px;
+      background: var(--forest-dark); border: 1px solid var(--border);
+      border-radius: 6px; font-size: 12px;
+    }
+    .size-summary.ok { border-color: #4a7c59; background: #1a2a1e; }
+    .size-summary.err { border-color: var(--brick-light); background: #2a1210; }
+    .size-summary-lbl { color: var(--text-muted); font-weight: 600; }
+    .size-summary-val { color: var(--text-mid); font-weight: 800;
+      font-family: 'Barlow Condensed', sans-serif; font-size: 14px;
+      letter-spacing: 0.5px; }
+    .size-summary.ok .size-summary-val { color: #7dcf96; }
+    .size-summary.err .size-summary-val { color: #f09080; }
+    .size-fill-btn {
+      background: transparent; border: 1px solid var(--border-dark);
+      color: var(--text-muted); border-radius: 4px; padding: 5px 10px;
+      font-size: 10px; font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .size-fill-btn:hover { border-color: var(--brick-light); color: var(--tan); }
+
     @media (max-width: 720px) {
       .layout { grid-template-columns: 1fr; }
       .result-card { position: static; }
@@ -785,14 +995,14 @@
     </g>
     </svg>
   </div>
-  <div class="badge">Contract Client Pricing</div>
+  <div class="badge">Retail Pricing · Beta</div>
 </header>
 
 <!-- ── HERO ── -->
 <div class="hero">
-  <div class="hero-label">Instant Quote Generator</div>
+  <div class="hero-label">Instant Price Estimator</div>
   <h1>Price your order<br><span>in seconds.</span></h1>
-  <p>Live pricing based on your quantity and design.<br>You supply the blanks — we handle the rest.</p>
+  <p>Pick a garment, tell us your quantity, size mix, and artwork — we'll do the math.<br>Blanks and printing rolled into one live estimate.</p>
 </div>
 
 <!-- ── LAYOUT ── -->
@@ -849,7 +1059,7 @@
       <div class="card-title">Quantity</div>
       <div class="qty-wrapper">
         <button class="qty-btn" onclick="adjustQty(-12)">−</button>
-        <input class="qty-input" type="number" id="qty" value="100" min="1" max="9999" oninput="calculate()">
+        <input class="qty-input" type="number" id="qty" value="100" min="1" max="9999" oninput="calculate(); updateSizeSummary();">
         <button class="qty-btn" onclick="adjustQty(12)">+</button>
       </div>
       <input type="range" class="qty-range" id="qtyRange" min="1" max="500" value="100" oninput="syncRange(this.value)">
@@ -870,10 +1080,49 @@
     </div>
 
     <!-- GARMENT DESCRIPTION -->
+    <!-- GARMENT CATALOG -->
     <div class="card">
-      <div class="card-title">Garment Description</div>
+      <div class="card-title">Choose Your Garment</div>
+      <div class="catalog-intro">
+        <strong>Hundreds more styles available.</strong> The list below is a general guide to our bestsellers —
+        we can customize any order in any way, with any garment either of our wholesale partners carries.
+        Browse the full catalogs to find exactly what you want, then come back and we'll quote it.
+        <div class="catalog-intro-links">
+          <a class="catalog-link" href="https://www.sportswearcollection.com/?site=XQIJYERCRG" target="_blank" rel="noopener">
+            Browse Full Catalog — Vol. I <span class="arrow">↗</span>
+          </a>
+          <a class="catalog-link" href="https://catalog.companycasuals.com/" target="_blank" rel="noopener">
+            Browse Full Catalog — Vol. II <span class="arrow">↗</span>
+          </a>
+        </div>
+      </div>
+      <div class="cat-filter-row" id="catFilterRow"></div>
+      <div class="garment-grid" id="garmentGrid"></div>
+      <div class="garment-selected-summary" id="garmentSelectedSummary" style="display:none"></div>
+      <div class="garment-note">
+        Prices shown are for base sizes (S–XL). 2XL+ upcharges are applied automatically based on your size breakdown.
+        Color and exact stock availability will be confirmed at order time — this is a live estimate, not a reservation.
+      </div>
+    </div>
+
+    <!-- SIZE BREAKDOWN -->
+    <div class="card">
+      <div class="card-title">Size Breakdown</div>
+      <div class="size-grid" id="sizeGrid"></div>
+      <div class="size-summary" id="sizeSummary">
+        <span class="size-summary-lbl" id="sizeSummaryLbl">Enter sizes to match your quantity</span>
+        <div style="display:flex;align-items:center;gap:10px">
+          <button type="button" class="size-fill-btn" onclick="autoFillSizes()">Auto-fill standard curve</button>
+          <span class="size-summary-val" id="sizeSummaryVal">0 / 0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT NOTES / CUSTOM GARMENT -->
+    <div class="card">
+      <div class="card-title">Garment Notes <span style="font-size:10px;color:var(--text-muted);font-weight:500;text-transform:none;letter-spacing:0">(optional)</span></div>
       <div id="garmentRows"></div>
-      <button class="add-garment-btn" onclick="addGarment()">+ Add Garment Type</button>
+      <button class="add-garment-btn" onclick="addGarment()">+ Add custom garment note</button>
     </div>
 
     <!-- ORDER TYPE -->
@@ -1066,7 +1315,7 @@
 
   <!-- RIGHT: RESULT -->
   <div>
-    <div class="result-card">
+    <div class="result-card" id="resultCard">
       <div class="result-header" id="resultHeader">
         <div class="label">Per Piece</div>
         <div class="price-big" id="perPiece">—</div>
@@ -1074,6 +1323,20 @@
       </div>
       <div class="result-body">
 
+        <div class="form-mode-banner">
+          <strong>Quote-request mode.</strong> Because you selected <em>Other</em>, live pricing is disabled —
+          we'll review your request and reply with a custom quote within one business day. All your order
+          details will still be sent when you hit <strong>Submit Request</strong> below.
+        </div>
+
+        <div class="breakdown-row" id="brkBlanksRow" style="display:none">
+          <span class="lbl" id="brkBlanksLabel">Blanks</span>
+          <span class="val" id="brkBlanks">—</span>
+        </div>
+        <div class="breakdown-row" id="brkUpchargeRow" style="display:none">
+          <span class="lbl">Size upcharges (2XL+)</span>
+          <span class="val" id="brkUpcharge">—</span>
+        </div>
         <div class="breakdown-row">
           <span class="lbl" id="brkPrintLabel">Print cost</span>
           <span class="val" id="brkPrint">—</span>
@@ -1104,7 +1367,7 @@
           <span class="val" id="brkTotal">—</span>
         </div>
 
-        <button class="cta-btn" onclick="sendQuote()">Send This Quote</button>
+        <button class="cta-btn" id="sendQuoteBtn" onclick="sendQuote()">Send This Quote</button>
         <p class="note-text">Print-only pricing · You supply the blanks<br>New Rochelle, NY · info@meshprintstudio.com<br><span class="note-disclaimer">This is just a guide — all pricing subject to final review and revision.</span></p>
       </div>
     </div>
@@ -1129,18 +1392,23 @@
 </div>
 
 <script>
-  // ── CONTRACT 2026 MATRIX — 8 colors ──────────
+  // ── RETAIL 2026 MATRIX — 8 colors ────────────
+  // Cols 1–7 sourced from my_teesom_retail (2026-04). Col 8 is linearly
+  // extrapolated from the consistent per-color delta in cols 2–7 of each row
+  // (step sizes within a row are tight to ±\$0.02, so extrapolation is safe).
+  // Replace col 8 with real numbers if/when they land in the source sheet.
   const MATRIX = [
-    { min:    1, max:    11, label: '1–11 pcs',        rates: [5.35, 7.49, 9.62, 16.22, null,  null,  null,  null  ] },
-    { min:   12, max:    24, label: '12–24 pcs',        rates: [2.78, 4.14, 5.43,  7.22, 16.22, null,  null,  null  ] },
-    { min:   25, max:    49, label: '25–49 pcs',        rates: [2.07, 3.14, 4.18,  5.23,  6.34, 16.22, null,  null  ] },
-    { min:   50, max:    99, label: '50–99 pcs',        rates: [1.67, 2.63, 3.59,  4.54,  5.69,  6.69,  7.69,  8.69] },
-    { min:  100, max:   249, label: '100–249 pcs',      rates: [1.28, 2.15, 3.03,  3.90,  4.78,  5.66,  6.54,  7.42] },
-    { min:  250, max:   499, label: '250–499 pcs',      rates: [1.06, 1.68, 2.48,  3.12,  3.68,  4.16,  4.78,  5.40] },
-    { min:  500, max:   999, label: '500–999 pcs',      rates: [0.79, 1.32, 1.83,  2.36,  2.76,  3.29,  3.79,  4.29] },
-    { min: 1000, max:  2499, label: '1,000–2,499 pcs',  rates: [0.77, 1.06, 1.48,  2.02,  2.41,  3.07,  3.53,  3.99] },
-    { min: 2500, max: 99999, label: '2,500+ pcs',       rates: [0.74, 1.02, 1.44,  1.91,  2.25,  2.93,  3.37,  3.81] },
+    { min:    1, max:    11, label: '1–11 pcs',        rates: [6.96, 9.20, 11.45, 13.71, 15.95, 18.20, 20.46, 22.71] },
+    { min:   12, max:    24, label: '12–24 pcs',       rates: [3.53, 5.26,  7.80, 10.33, 12.86, 15.39, 17.92, 20.45] },
+    { min:   25, max:    49, label: '25–49 pcs',       rates: [2.88, 4.14,  6.12,  8.08, 10.05, 12.01, 13.99, 15.96] },
+    { min:   50, max:    99, label: '50–99 pcs',       rates: [2.43, 3.07,  4.51,  5.94,  7.37,  8.81, 10.24, 11.67] },
+    { min:  100, max:   249, label: '100–249 pcs',     rates: [2.08, 2.72,  3.98,  5.24,  6.50,  7.77,  9.02, 10.28] },
+    { min:  250, max:   499, label: '250–499 pcs',     rates: [1.58, 2.40,  3.49,  4.59,  5.69,  6.78,  7.88,  8.98] },
+    { min:  500, max:   999, label: '500–999 pcs',     rates: [1.38, 2.09,  3.04,  3.98,  4.93,  5.88,  6.81,  7.75] },
+    { min: 1000, max:  2499, label: '1,000–2,499 pcs', rates: [1.12, 1.81,  2.62,  3.42,  4.23,  5.03,  5.84,  6.65] },
+    { min: 2500, max: 99999, label: '2,500+ pcs',      rates: [1.01, 1.56,  2.23,  2.90,  3.58,  4.25,  4.93,  5.60] },
   ];
+  const MAX_COLORS = 8;
 
   const RUSH_MULT = { standard: 1.0, oneweek: 1.45, twoday: 2.0 };
 
@@ -1162,7 +1430,202 @@
     { key: 'other',      label: 'Other',                fleece: false },
   ];
 
-  let garments         = [{ type: 'tee', desc: '' }];
+  // ── RETAIL GARMENT CATALOG ───────────────────
+  // Band-aid catalog: ~24 bestsellers across S&S + SanMar. Wholesale costs are
+  // approximate case-pack estimates as of Q2 2026 and should be treated as a
+  // baseline until S&S / SanMar API integration replaces this.
+  const GARMENT_CATEGORIES = [
+    { key: 'all',      label: 'All' },
+    { key: 'tee',      label: 'Tees' },
+    { key: 'longsleeve', label: 'Long Sleeves' },
+    { key: 'hoodie',   label: 'Hoodies' },
+    { key: 'crewneck', label: 'Crewnecks' },
+    { key: 'tank',     label: 'Tanks' },
+    { key: 'polo',     label: 'Polos' },
+  ];
+
+  // Shared swatch palette. Hex codes are approximate visual stand-ins — exact
+  // dye lots will be confirmed at order time. Add/edit keys here once and every
+  // garment referencing them picks up the change.
+  const COLOR_PALETTE = {
+    white:       { name: 'White',           hex: '#FEFEFA' },
+    natural:     { name: 'Natural',         hex: '#F0E6CC' },
+    sand:        { name: 'Sand',            hex: '#D9C79E' },
+    ash:         { name: 'Ash',             hex: '#DADADA' },
+    sportGrey:   { name: 'Sport Grey',      hex: '#A4A4A4' },
+    heatherGrey: { name: 'Heather Grey',    hex: '#9B9B9B' },
+    athHeather:  { name: 'Athletic Heather', hex: '#B8BCC1' },
+    charcoal:    { name: 'Charcoal',        hex: '#4A4A4A' },
+    black:       { name: 'Black',           hex: '#1A1A1A' },
+    navy:        { name: 'Navy',            hex: '#1F2D50' },
+    royal:       { name: 'Royal',           hex: '#1B4B9A' },
+    lightBlue:   { name: 'Light Blue',      hex: '#7BB6E0' },
+    teal:        { name: 'Teal',            hex: '#1F7A7A' },
+    red:         { name: 'Red',             hex: '#B5302E' },
+    cardinal:    { name: 'Cardinal',        hex: '#9A1F29' },
+    maroon:      { name: 'Maroon',          hex: '#6B1B25' },
+    forest:      { name: 'Forest Green',    hex: '#1F4432' },
+    kelly:       { name: 'Kelly Green',     hex: '#2E8B57' },
+    army:        { name: 'Army',            hex: '#4B5320' },
+    olive:       { name: 'Olive',           hex: '#6B6A3B' },
+    purple:      { name: 'Purple',          hex: '#5E3A84' },
+    orange:      { name: 'Orange',          hex: '#DA6B2B' },
+    gold:        { name: 'Gold',            hex: '#F0C94E' },
+    brown:       { name: 'Brown',           hex: '#5C4031' },
+    pink:        { name: 'Pink',            hex: '#E89BB5' },
+  };
+
+  // Vendor keys: 'ss' (Sportswear Collection / S&S Activewear) and
+  // 'sanmar' (Company Casuals / SanMar). Color lists are approximate core
+  // selections — customers can always request any other color via the catalog.
+  const GARMENT_CATALOG = [
+    // ── TEES ──
+    { id: 'g5000',  brand: 'Gildan',         name: 'Heavy Cotton Tee',     style: '5000',  cat: 'tee',        fleece: false, wholesale: 2.80,  vendor: 'ss',
+      colors: ['white','black','navy','red','royal','forest','charcoal','sportGrey','maroon','kelly','purple','orange'] },
+    { id: 'g64000', brand: 'Gildan',         name: 'Softstyle Tee',        style: '64000', cat: 'tee',        fleece: false, wholesale: 3.00,  vendor: 'ss',
+      colors: ['white','black','navy','red','royal','forest','charcoal','sportGrey','heatherGrey','maroon','purple','lightBlue'] },
+    { id: 'bc3001', brand: 'Bella+Canvas',   name: 'Unisex Jersey Tee',    style: '3001',  cat: 'tee',        fleece: false, wholesale: 4.20,  vendor: 'ss',
+      colors: ['white','black','navy','red','royal','forest','heatherGrey','athHeather','maroon','army','olive','pink'] },
+    { id: 'nl3600', brand: 'Next Level',     name: 'Cotton Crew Tee',      style: '3600',  cat: 'tee',        fleece: false, wholesale: 4.30,  vendor: 'ss',
+      colors: ['white','black','navy','red','royal','heatherGrey','charcoal','cardinal','purple','kelly','army','olive'] },
+    { id: 'cc1717', brand: 'Comfort Colors', name: 'Garment-Dyed Tee',     style: '1717',  cat: 'tee',        fleece: false, wholesale: 5.50,  vendor: 'ss',
+      colors: ['natural','black','navy','red','forest','maroon','sand','ash','kelly','orange','brown','purple'] },
+    { id: 'aa2001', brand: 'American App.',  name: 'Fine Jersey Tee',      style: '2001',  cat: 'tee',        fleece: false, wholesale: 6.80,  vendor: 'ss',
+      colors: ['white','black','navy','red','charcoal','heatherGrey','forest','army','cardinal','brown','kelly','purple'] },
+    // ── LONG SLEEVES ──
+    { id: 'g5400',  brand: 'Gildan',         name: 'Heavy Cotton LS',      style: '5400',  cat: 'longsleeve', fleece: false, wholesale: 5.50,  vendor: 'ss',
+      colors: ['white','black','navy','red','royal','forest','charcoal','sportGrey','maroon','heatherGrey'] },
+    { id: 'bc3501', brand: 'Bella+Canvas',   name: 'Jersey Long Sleeve',   style: '3501',  cat: 'longsleeve', fleece: false, wholesale: 7.80,  vendor: 'ss',
+      colors: ['white','black','navy','red','royal','forest','heatherGrey','athHeather','maroon','army'] },
+    { id: 'nl3601', brand: 'Next Level',     name: 'Cotton Long Sleeve',   style: '3601',  cat: 'longsleeve', fleece: false, wholesale: 7.90,  vendor: 'ss',
+      colors: ['white','black','navy','royal','heatherGrey','charcoal','red','maroon','forest'] },
+    { id: 'cc6014', brand: 'Comfort Colors', name: 'Garment-Dyed LS',      style: '6014',  cat: 'longsleeve', fleece: false, wholesale: 9.50,  vendor: 'ss',
+      colors: ['natural','black','navy','red','forest','maroon','sand','ash','brown'] },
+    // ── HOODIES ──
+    { id: 'g18500', brand: 'Gildan',         name: 'Heavy Blend Hoodie',   style: '18500', cat: 'hoodie',     fleece: true,  wholesale: 11.50, vendor: 'ss',
+      colors: ['black','navy','sportGrey','charcoal','maroon','forest','red','royal','purple','army','heatherGrey','brown'] },
+    { id: 'champs700', brand: 'Champion',    name: 'Powerblend Hoodie',    style: 'S700',  cat: 'hoodie',     fleece: true,  wholesale: 18.50, vendor: 'ss',
+      colors: ['heatherGrey','black','navy','red','army','cardinal','maroon','charcoal'] },
+    { id: 'iss4500',brand: 'Independent',    name: 'Midweight Hoodie',     style: 'SS4500',cat: 'hoodie',     fleece: true,  wholesale: 21.00, vendor: 'ss',
+      colors: ['black','navy','charcoal','heatherGrey','army','maroon','forest','red','natural','royal'] },
+    { id: 'bc3719', brand: 'Bella+Canvas',   name: 'Sponge Fleece Hoodie', style: '3719',  cat: 'hoodie',     fleece: true,  wholesale: 22.00, vendor: 'ss',
+      colors: ['black','navy','heatherGrey','athHeather','red','forest','maroon','olive','sand'] },
+    // ── CREWNECKS ──
+    { id: 'g18000', brand: 'Gildan',         name: 'Heavy Blend Crew',     style: '18000', cat: 'crewneck',   fleece: true,  wholesale: 10.50, vendor: 'ss',
+      colors: ['black','navy','sportGrey','charcoal','maroon','forest','red','royal','army','heatherGrey'] },
+    { id: 'champs600',brand: 'Champion',     name: 'Powerblend Crew',      style: 'S600',  cat: 'crewneck',   fleece: true,  wholesale: 17.00, vendor: 'ss',
+      colors: ['black','navy','red','army','heatherGrey','maroon','charcoal'] },
+    { id: 'iss3000',brand: 'Independent',    name: 'Midweight Crew',       style: 'SS3000',cat: 'crewneck',   fleece: true,  wholesale: 19.50, vendor: 'ss',
+      colors: ['black','navy','charcoal','heatherGrey','army','maroon','forest','red'] },
+    { id: 'bc3901', brand: 'Bella+Canvas',   name: 'Sponge Fleece Crew',   style: '3901',  cat: 'crewneck',   fleece: true,  wholesale: 20.00, vendor: 'ss',
+      colors: ['black','navy','heatherGrey','athHeather','red','forest','maroon'] },
+    // ── TANKS ──
+    { id: 'g5200',  brand: 'Gildan',         name: 'Heavy Cotton Tank',    style: '5200',  cat: 'tank',       fleece: false, wholesale: 3.90,  vendor: 'ss',
+      colors: ['white','black','navy','red','charcoal','sportGrey','royal','forest'] },
+    { id: 'bc3480', brand: 'Bella+Canvas',   name: 'Jersey Tank',          style: '3480',  cat: 'tank',       fleece: false, wholesale: 4.90,  vendor: 'ss',
+      colors: ['white','black','navy','red','athHeather','heatherGrey','royal','army'] },
+    { id: 'nl3633', brand: 'Next Level',     name: 'Cotton Tank',          style: '3633',  cat: 'tank',       fleece: false, wholesale: 5.20,  vendor: 'ss',
+      colors: ['white','black','navy','red','royal','heatherGrey'] },
+    // ── POLOS ──
+    { id: 'pak500', brand: 'Port Authority', name: 'Silk Touch Polo',      style: 'K500',  cat: 'polo',       fleece: false, wholesale: 10.50, vendor: 'sanmar',
+      colors: ['white','black','navy','red','royal','forest','charcoal','maroon','lightBlue'] },
+    { id: 'pak110', brand: 'Port Authority', name: 'Dry Zone UV Polo',     style: 'K110',  cat: 'polo',       fleece: false, wholesale: 14.00, vendor: 'sanmar',
+      colors: ['white','black','navy','red','charcoal','forest','royal'] },
+    { id: 'nike363807',brand: 'Nike',        name: 'Dri-FIT Micro Pique',  style: '363807',cat: 'polo',       fleece: false, wholesale: 28.00, vendor: 'sanmar',
+      colors: ['white','black','navy','red','royal','charcoal','forest'] },
+    // ── OTHER ── Persistent across all category filters. Selecting this card
+    // switches the calculator into form-only (quote-request) mode.
+    { id: 'other',  brand: 'Custom',         name: 'Something else entirely', style: '—',    cat: 'other',      fleece: false, wholesale: 0,     vendor: 'ss',
+      colors: [], isOther: true },
+  ];
+
+  // Full catalog landing pages (shown at the top of the garment picker).
+  const CATALOG_URLS = {
+    ss:     'https://www.sportswearcollection.com/?site=XQIJYERCRG',
+    sanmar: 'https://catalog.companycasuals.com/',
+  };
+
+  // Per-garment deep links.
+  //
+  // Sportswear Collection uses a predictable URL pattern:
+  //   /p/{brand-slug}/{style}?site=XQIJYERCRG
+  // Example: https://www.sportswearcollection.com/p/gildan/5000?site=XQIJYERCRG
+  //
+  // Since S&S carries every brand we list (including Port Authority and Nike,
+  // which are technically SanMar brands), we route ALL per-garment View links
+  // through sportswearcollection.com with the tracking code preserved. The
+  // top-level "Full Catalog" links still surface both catalogs for customers
+  // who want to browse the full inventory.
+  //
+  // If a specific garment's deep link ever breaks, set an explicit `url`
+  // field on that garment object and it will be used verbatim.
+  const BRAND_SLUG = {
+    'Gildan':          'gildan',
+    'Bella+Canvas':    'bella-canvas',
+    'Next Level':      'next-level',
+    'Comfort Colors':  'comfort-colors',
+    'American App.':   'american-apparel',
+    'Champion':        'champion',
+    'Independent':     'independent-trading-co',
+    'Port Authority':  'port-authority',
+    'Nike':            'nike',
+  };
+  function brandSlug(brandLabel) {
+    if (BRAND_SLUG[brandLabel]) return BRAND_SLUG[brandLabel];
+    return brandLabel.toLowerCase()
+      .replace(/\+/g, '-')
+      .replace(/\./g, '')
+      .replace(/\s+/g, '-');
+  }
+  function catalogUrl(g) {
+    if (g && g.url) return g.url;
+    const slug  = brandSlug(g.brand);
+    const style = encodeURIComponent(g.style);
+    return `https://www.sportswearcollection.com/p/${slug}/${style}?site=XQIJYERCRG`;
+  }
+
+  // Retail markup on blanks. Tight two-tier rule:
+  //   wholesale < $6.50  →  x1.55
+  //   wholesale ≥ $6.50  →  x1.45
+  // The lower-cost bucket carries a slightly higher multiplier so small,
+  // low-ticket tees still pencil out; anything heavier rides the thinner markup.
+  function retailMarkup(wholesale) {
+    return wholesale < 6.50 ? 1.55 : 1.45;
+  }
+  function retailBlankPrice(wholesale) {
+    // Round to nearest $0.25 so the displayed numbers look intentional.
+    const raw = wholesale * retailMarkup(wholesale);
+    return Math.round(raw * 4) / 4;
+  }
+
+  // Industry-standard size upcharges applied on top of the retail blank price.
+  // Applied per garment at the matching size. S–XL carry no upcharge.
+  const SIZE_DEFS = [
+    { key: 'XS',  upcharge: 0 },
+    { key: 'S',   upcharge: 0 },
+    { key: 'M',   upcharge: 0 },
+    { key: 'L',   upcharge: 0 },
+    { key: 'XL',  upcharge: 0 },
+    { key: '2XL', upcharge: 2 },
+    { key: '3XL', upcharge: 4 },
+    { key: '4XL', upcharge: 6 },
+    { key: '5XL', upcharge: 8 },
+  ];
+
+  // Standard size curve used by the "Auto-fill" button. Weighted toward M/L,
+  // matches what most small brand first runs end up ordering.
+  const SIZE_CURVE = { XS: 0, S: 0.12, M: 0.25, L: 0.30, XL: 0.20, '2XL': 0.10, '3XL': 0.03, '4XL': 0, '5XL': 0 };
+
+  let selectedGarmentId = 'bc3001'; // default to Bella+Canvas 3001
+  let selectedColor = null;         // palette key, or '__other' for custom
+  let customColor = '';             // free-text entered when Other color chip is active
+  let customGarment = '';           // free-text describing the "Other" garment
+  let otherExplainerSeen = false;   // tracks whether we've shown the form-mode modal yet
+  let activeCategory    = 'all';
+  let sizeBreakdown     = {};
+  SIZE_DEFS.forEach(s => sizeBreakdown[s.key] = 0);
+
+  let garments         = [];
   let locIdCounter     = 1;
   let locations        = [{ id: 1, preset: 'front', customName: '', colors: 2, fileName: '', file: null, printW: '', printH: '', drop: '' }];
   let orderType        = 'firstrun';
@@ -1172,7 +1635,278 @@
   let pmsColorCount    = 1;
   let pmsColorList     = [];
 
-  // ── GARMENTS ──────────────────────────────────
+  // ── GARMENT CATALOG (retail) ──────────────────
+  function renderCategoryChips() {
+    const row = document.getElementById('catFilterRow');
+    row.innerHTML = '';
+    GARMENT_CATEGORIES.forEach(c => {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'cat-chip' + (c.key === activeCategory ? ' active' : '');
+      chip.textContent = c.label;
+      chip.onclick = () => { activeCategory = c.key; renderCategoryChips(); renderCatalog(); };
+      row.appendChild(chip);
+    });
+  }
+
+  function renderCatalog() {
+    const grid = document.getElementById('garmentGrid');
+    grid.innerHTML = '';
+    // The "other" garment is persistent — always appended regardless of
+    // which category filter is active — so customers can always request
+    // something we don't stock as a preset.
+    const realGarments = GARMENT_CATALOG.filter(g => !g.isOther);
+    const otherGarment = GARMENT_CATALOG.find(g => g.isOther);
+    const filtered = activeCategory === 'all'
+      ? realGarments
+      : realGarments.filter(g => g.cat === activeCategory);
+    if (otherGarment) filtered.push(otherGarment);
+    filtered.forEach(g => {
+      const card = document.createElement('div');
+      card.className = 'garment-card' + (g.id === selectedGarmentId ? ' selected' : '') + (g.isOther ? ' garment-card-other' : '');
+      const price = retailBlankPrice(g.wholesale);
+      const url = catalogUrl(g);
+      if (g.isOther) {
+        card.innerHTML = `
+          <div class="gc-brand">Other</div>
+          <div class="gc-name">Something else entirely</div>
+          <div class="gc-style">Request a custom quote</div>
+          <div class="gc-price"><span class="from">quote</span>on request</div>
+        `;
+      } else {
+        card.innerHTML = `
+          <a class="gc-view-link" href="${url}" target="_blank" rel="noopener">View ↗</a>
+          <div class="gc-brand">${g.brand}</div>
+          <div class="gc-name">${g.name}</div>
+          <div class="gc-style">Style ${g.style}</div>
+          <div class="gc-price"><span class="from">from</span>$${price.toFixed(2)}</div>
+        `;
+      }
+      // Explicit handler: stop the card's onclick from firing, then open the
+      // vendor product page in a new tab. (Relying on the <a> alone was
+      // swallowing clicks inside the clickable card wrapper.)
+      const viewLink = card.querySelector('.gc-view-link');
+      if (viewLink) {
+        viewLink.addEventListener('click', e => {
+          e.stopPropagation();
+          e.preventDefault();
+          window.open(url, '_blank', 'noopener');
+        });
+      }
+      card.onclick = () => selectGarment(g.id);
+      grid.appendChild(card);
+    });
+    updateGarmentSummary();
+  }
+
+  function selectGarment(id) {
+    const wasOther = selectedGarmentId === 'other';
+    selectedGarmentId = id;
+    const g = GARMENT_CATALOG.find(x => x.id === id);
+    // Reset color to first available when switching garments (or if current
+    // color isn't offered in the new garment).
+    if (g && (!selectedColor || !((g.colors || []).concat('__other')).includes(selectedColor))) {
+      selectedColor = (g.colors && g.colors[0]) || null;
+    }
+    // Fire the form-mode explainer the first time the customer picks Other.
+    if (id === 'other' && !wasOther && !otherExplainerSeen) {
+      showOtherExplainer();
+      otherExplainerSeen = true;
+    }
+    renderCatalog();
+    detectFleece();
+    calculate();
+  }
+
+  function isFormOnlyMode() {
+    return selectedGarmentId === 'other';
+  }
+
+  function showOtherExplainer() {
+    const m = document.getElementById('otherExplainerModal');
+    if (m) m.style.display = 'flex';
+  }
+  function closeOtherExplainer() {
+    const m = document.getElementById('otherExplainerModal');
+    if (m) m.style.display = 'none';
+  }
+
+  function getSelectedGarment() {
+    return GARMENT_CATALOG.find(g => g.id === selectedGarmentId) || GARMENT_CATALOG[0];
+  }
+
+  function updateGarmentSummary() {
+    const g = getSelectedGarment();
+    const el = document.getElementById('garmentSelectedSummary');
+    if (!g) { el.style.display = 'none'; return; }
+    el.style.display = 'block';
+
+    // ── OTHER GARMENT: form-only mode ────────────────────────
+    if (g.isOther) {
+      el.innerHTML = `
+        <div>Selected: <strong>Custom / Other</strong> — pricing is on request.</div>
+        <div class="color-picker-label">Describe What You Want</div>
+        <input type="text" id="customGarmentInput" class="addr-input" style="margin-top:4px"
+               placeholder="e.g. Carhartt beanies, performance joggers, youth raglan tees…"
+               value="${customGarment.replace(/"/g, '&quot;')}">
+        <div class="color-picker-label" style="margin-top:14px">Preferred Color</div>
+        <input type="text" id="customColorInput" class="addr-input" style="margin-top:4px"
+               placeholder="e.g. Burgundy, heather sand, PMS 485…"
+               value="${customColor.replace(/"/g, '&quot;')}">
+        <div class="color-note">Heads up: once "Other" is selected, the live estimator turns off and your submission becomes a custom quote request. We'll reply with pricing within one business day.</div>
+      `;
+      const giEl = document.getElementById('customGarmentInput');
+      if (giEl) giEl.oninput = e => { customGarment = e.target.value; };
+      const ciEl = document.getElementById('customColorInput');
+      if (ciEl) ciEl.oninput = e => { customColor = e.target.value; };
+      return;
+    }
+
+    // ── STOCK GARMENT: normal estimator ──────────────────────
+    const price = retailBlankPrice(g.wholesale);
+    const colors = g.colors || [];
+    // Make sure selectedColor is valid for this garment.
+    if (selectedColor !== '__other' && (!selectedColor || !colors.includes(selectedColor))) {
+      selectedColor = colors[0] || null;
+    }
+    let activeColorName = '—';
+    if (selectedColor === '__other') activeColorName = customColor ? `Other — ${customColor}` : 'Other (custom)';
+    else if (selectedColor && COLOR_PALETTE[selectedColor]) activeColorName = COLOR_PALETTE[selectedColor].name;
+    el.innerHTML = `
+      <div>Selected: <strong>${g.brand} ${g.style}</strong> — ${g.name}
+      · Base price <span class="gsm-price">$${price.toFixed(2)}</span>/pc (S–XL)
+      · Color: <strong>${activeColorName}</strong></div>
+      <div class="color-picker-label">Blank Color</div>
+      <div class="color-chips" id="colorChips"></div>
+      <div id="customColorWrap" style="display:${selectedColor === '__other' ? 'block' : 'none'};margin-top:8px">
+        <input type="text" id="customColorInput" class="addr-input"
+               placeholder="Describe the color you want (e.g. Dusty Rose, PMS 485…)"
+               value="${customColor.replace(/"/g, '&quot;')}">
+      </div>
+      <div class="color-note">Showing a curated core palette. Need a different color? Pick <strong>Other</strong> and describe it, or browse the full catalog via the "View" link on the card above — we can source any color our partners carry.</div>
+    `;
+    const chipsEl = document.getElementById('colorChips');
+    colors.forEach(key => {
+      const def = COLOR_PALETTE[key];
+      if (!def) return;
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'color-chip' + (key === selectedColor ? ' active' : '');
+      chip.innerHTML = `<span class="color-swatch" style="background:${def.hex}"></span>${def.name}`;
+      chip.onclick = () => {
+        selectedColor = key;
+        updateGarmentSummary();
+      };
+      chipsEl.appendChild(chip);
+    });
+    // "Other" custom-color chip — always last, always available.
+    const otherChip = document.createElement('button');
+    otherChip.type = 'button';
+    otherChip.className = 'color-chip color-chip-other' + (selectedColor === '__other' ? ' active' : '');
+    otherChip.innerHTML = `<span class="color-swatch color-swatch-other">?</span>Other`;
+    otherChip.onclick = () => {
+      selectedColor = '__other';
+      updateGarmentSummary();
+      const inp = document.getElementById('customColorInput');
+      if (inp) inp.focus();
+    };
+    chipsEl.appendChild(otherChip);
+    const cci = document.getElementById('customColorInput');
+    if (cci) cci.oninput = e => { customColor = e.target.value; };
+  }
+
+  // ── SIZE BREAKDOWN ────────────────────────────
+  function renderSizeGrid() {
+    const grid = document.getElementById('sizeGrid');
+    grid.innerHTML = '';
+    SIZE_DEFS.forEach(s => {
+      const cell = document.createElement('div');
+      cell.className = 'size-cell';
+      const lbl = document.createElement('div');
+      lbl.className = 'size-lbl';
+      lbl.textContent = s.key;
+      const up = document.createElement('div');
+      up.className = 'size-upcharge';
+      up.textContent = s.upcharge > 0 ? '+$' + s.upcharge : '';
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.min = '0';
+      input.className = 'size-input';
+      input.value = sizeBreakdown[s.key] || '';
+      input.placeholder = '0';
+      input.oninput = e => {
+        const v = parseInt(e.target.value) || 0;
+        sizeBreakdown[s.key] = Math.max(0, v);
+        updateSizeSummary();
+        calculate();
+      };
+      cell.appendChild(lbl);
+      cell.appendChild(up);
+      cell.appendChild(input);
+      grid.appendChild(cell);
+    });
+    updateSizeSummary();
+  }
+
+  function totalSizeCount() {
+    return SIZE_DEFS.reduce((sum, s) => sum + (sizeBreakdown[s.key] || 0), 0);
+  }
+
+  function updateSizeSummary() {
+    const qty = parseInt(document.getElementById('qty').value) || 0;
+    const sum = totalSizeCount();
+    const box = document.getElementById('sizeSummary');
+    const lbl = document.getElementById('sizeSummaryLbl');
+    const val = document.getElementById('sizeSummaryVal');
+    val.textContent = sum.toLocaleString() + ' / ' + qty.toLocaleString();
+    box.classList.remove('ok','err');
+    if (sum === 0) {
+      lbl.textContent = 'Enter sizes to match your quantity';
+    } else if (sum === qty) {
+      box.classList.add('ok');
+      lbl.textContent = 'Size breakdown matches quantity';
+    } else if (sum < qty) {
+      box.classList.add('err');
+      lbl.textContent = 'Short by ' + (qty - sum).toLocaleString() + ' pc' + (qty - sum !== 1 ? 's' : '');
+    } else {
+      box.classList.add('err');
+      lbl.textContent = 'Over by ' + (sum - qty).toLocaleString() + ' pc' + (sum - qty !== 1 ? 's' : '');
+    }
+  }
+
+  function autoFillSizes() {
+    const qty = parseInt(document.getElementById('qty').value) || 0;
+    if (qty <= 0) return;
+    // Distribute proportionally, rounding, then fix the last remainder into L.
+    let running = 0;
+    const order = ['XS','S','M','L','XL','2XL','3XL','4XL','5XL'];
+    order.forEach(k => {
+      const share = Math.round(qty * (SIZE_CURVE[k] || 0));
+      sizeBreakdown[k] = share;
+      running += share;
+    });
+    const diff = qty - running;
+    sizeBreakdown['L'] = Math.max(0, (sizeBreakdown['L'] || 0) + diff);
+    renderSizeGrid();
+    calculate();
+  }
+
+  // Returns { blankCost, upchargeCost } for the current selection + size mix.
+  function computeBlankCost() {
+    const g = getSelectedGarment();
+    if (!g) return { blankCost: 0, upchargeCost: 0 };
+    const base = retailBlankPrice(g.wholesale);
+    let blankCost = 0, upchargeCost = 0;
+    SIZE_DEFS.forEach(s => {
+      const n = sizeBreakdown[s.key] || 0;
+      if (!n) return;
+      blankCost    += n * base;
+      upchargeCost += n * s.upcharge;
+    });
+    return { blankCost, upchargeCost };
+  }
+
+  // ── GARMENTS (legacy free-text notes) ─────────
   function renderGarments() {
     const container = document.getElementById('garmentRows');
     container.innerHTML = '';
@@ -1227,7 +1961,8 @@
     container.innerHTML = '';
 
     locations.forEach((loc, idx) => {
-      while (loc.colors > 1 && tier.rates[loc.colors - 1] === null) loc.colors--;
+      if (loc.colors > MAX_COLORS) loc.colors = MAX_COLORS;
+      while (loc.colors > 1 && (tier.rates[loc.colors - 1] === null || tier.rates[loc.colors - 1] === undefined)) loc.colors--;
 
       const block = document.createElement('div');
       block.className = 'loc-block';
@@ -1347,8 +2082,8 @@
 
       const colorRow = document.createElement('div');
       colorRow.className = 'loc-color-row';
-      for (let c = 1; c <= 8; c++) {
-        const available = tier.rates[c - 1] !== null;
+      for (let c = 1; c <= MAX_COLORS; c++) {
+        const available = tier.rates[c - 1] !== null && tier.rates[c - 1] !== undefined;
         const cb = document.createElement('div');
         cb.className = 'lc-btn' + (c === loc.colors ? ' active' : '') + (!available ? ' unavail' : '');
         cb.textContent = c + (c >= 7 ? '✦' : 'C');
@@ -1506,7 +2241,9 @@
     const descStr    = garments.map(g => g.desc).join(' ').toLowerCase();
     const keywords   = ['hoodie', 'hoody', 'sweatshirt', 'crewneck', 'crew neck', 'fleece', 'pullover', 'zip-up', 'zipper', 'zip up'];
     const styleNums  = ['18500', '18000', 'ss3000', 'ss4500', 'p170', 'pc90', 'sf76', 'sf400', 'g185', 'g186'];
-    const detected   = garments.some(g => fleeceKeys.has(g.type))
+    const selected   = getSelectedGarment();
+    const detected   = (selected && selected.fleece)
+                    || garments.some(g => fleeceKeys.has(g.type))
                     || keywords.some(k => descStr.includes(k))
                     || styleNums.some(k => descStr.includes(k));
     const fleeceEl  = document.getElementById('extra-fleece');
@@ -1557,6 +2294,29 @@
     document.getElementById('qtyDisplay').textContent = qty.toLocaleString();
     document.getElementById('qtyRange').value = Math.min(qty, 500);
 
+    // Form-only mode: customer picked "Other" — disable the estimator and
+    // show the quote-request banner. All form data is still collected and
+    // sent when they submit.
+    const resultCard = document.getElementById('resultCard');
+    const sendBtn    = document.getElementById('sendQuoteBtn');
+    const floatCta   = document.querySelector('.float-cta');
+    if (isFormOnlyMode()) {
+      if (resultCard) resultCard.classList.add('form-only');
+      if (sendBtn)    sendBtn.textContent  = 'Submit Quote Request';
+      if (floatCta)   floatCta.textContent = 'Submit Quote Request →';
+      document.getElementById('perPiece').textContent  = '—';
+      document.getElementById('brkTotal').textContent  = 'Quote on request';
+      document.getElementById('floatPpc').textContent  = '—';
+      document.getElementById('floatTotal').textContent = 'Quote on request';
+      // Still render locations so customers can describe their print layout.
+      renderLocations();
+      return;
+    } else {
+      if (resultCard) resultCard.classList.remove('form-only');
+      if (sendBtn)    sendBtn.textContent  = 'Send This Quote';
+      if (floatCta)   floatCta.textContent = 'Send This Quote →';
+    }
+
     const tier = getTier(qty);
     document.getElementById('tierLabel').textContent = tier.label;
 
@@ -1602,8 +2362,33 @@
     const numBoxes     = Math.ceil(qty / perBox);
     const shippingCost = shippingMode === 'ship' ? numBoxes * 30 : 0;
 
-    const total    = rushedPrintCost + screenCost + platenCost + extrasCost + shippingCost;
+    // Retail blank cost + size upcharges
+    const { blankCost, upchargeCost } = computeBlankCost();
+
+    const total    = blankCost + upchargeCost + rushedPrintCost + screenCost + platenCost + extrasCost + shippingCost;
     const perPiece = total / qty;
+
+    // Blanks breakdown row
+    const blanksRow = document.getElementById('brkBlanksRow');
+    if (blankCost > 0) {
+      blanksRow.style.display = 'flex';
+      const g = getSelectedGarment();
+      const base = g ? retailBlankPrice(g.wholesale) : 0;
+      document.getElementById('brkBlanksLabel').textContent =
+        g ? `Blanks (${g.brand} ${g.style} @ ${fmt(base)}/pc)` : 'Blanks';
+      document.getElementById('brkBlanks').textContent = fmt(blankCost);
+    } else {
+      blanksRow.style.display = 'none';
+    }
+    const upRow = document.getElementById('brkUpchargeRow');
+    if (upchargeCost > 0) {
+      upRow.style.display = 'flex';
+      document.getElementById('brkUpcharge').textContent = '+' + fmt(upchargeCost);
+    } else {
+      upRow.style.display = 'none';
+    }
+
+    updateSizeSummary();
 
     // Update display
     document.getElementById('perPiece').textContent = fmt(perPiece);
@@ -1678,6 +2463,16 @@
       return;
     }
 
+    // Size breakdown must match the quantity field
+    const qtyNum = parseInt(document.getElementById('qty').value) || 0;
+    const sumSizes = totalSizeCount();
+    if (sumSizes !== qtyNum || qtyNum === 0) {
+      const sizeCard = document.getElementById('sizeGrid').closest('.card');
+      sizeCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('sizeSummary').classList.add('err');
+      return;
+    }
+
     const clientName    = document.getElementById('clientName').value.trim();
     const clientCompany = document.getElementById('clientCompany').value.trim();
     const clientPhone   = document.getElementById('clientPhone').value.trim();
@@ -1688,10 +2483,27 @@
     const ppc         = document.getElementById('perPiece').textContent;
     const type        = orderType === 'reorder' ? 'Re-order' : 'First Run';
     const rush        = { standard: 'Standard (10 business days)', oneweek: 'Rush 1 Week', twoday: 'Rush 2–3 Days' }[rushMode];
-    const garment     = garments.map(g => {
+    const selectedG   = getSelectedGarment();
+    const formMode    = isFormOnlyMode();
+    const blankPrice  = selectedG ? retailBlankPrice(selectedG.wholesale) : 0;
+    const garmentPick = formMode
+      ? `CUSTOM / OTHER — ${customGarment.trim() || '(no description provided)'}`
+      : (selectedG
+          ? `${selectedG.brand} ${selectedG.style} — ${selectedG.name} ($${blankPrice.toFixed(2)}/pc S–XL)`
+          : '');
+    const colorPick   = (selectedColor === '__other' || formMode)
+      ? (customColor.trim() ? `Other — ${customColor.trim()}` : 'Other (custom, unspecified)')
+      : ((selectedColor && COLOR_PALETTE[selectedColor])
+          ? COLOR_PALETTE[selectedColor].name
+          : '');
+    const garmentNotes = garments.map(g => {
       const t = GARMENT_TYPES.find(t => t.key === g.type);
       return (t ? t.label : g.type) + (g.desc ? ` — ${g.desc}` : '');
-    }).join(', ');
+    }).filter(Boolean).join(', ');
+    const sizeLine    = SIZE_DEFS
+      .filter(s => (sizeBreakdown[s.key] || 0) > 0)
+      .map(s => `${sizeBreakdown[s.key]}${s.key}`)
+      .join(' / ');
     const desc        = document.getElementById('projectDesc').value.trim();
     const dueDate     = document.getElementById('dueDate').value;
     const flexibility = document.getElementById('flexibility').value;
@@ -1733,10 +2545,16 @@
       ? '  ✓ Client confirmed art files were uploaded'
       : '  ⚠ Client did NOT confirm upload — please verify before proceeding';
 
+    const leadIn     = formMode
+      ? "I'd like a custom quote — details below:"
+      : "Here's my order:";
+    const totalLine  = formMode
+      ? 'Estimated Total: QUOTE ON REQUEST (custom garment — please review and reply)'
+      : `Estimated Total: ${tot} (${ppc}/pc)`;
     const body = [
       'Hi David,',
       '',
-      "Here's my order:",
+      leadIn,
       '',
       `Name: ${clientName}`,
       `Company: ${clientCompany}`,
@@ -1744,8 +2562,11 @@
       `Email: ${clientEmail}`,
       '',
       `Qty: ${qty}`,
-      garment     ? `Garment: ${garment}`                            : '',
-      dueDate     ? `Due Date: ${dueDate}`                           : '',
+      garmentPick  ? `Garment: ${garmentPick}`                        : '',
+      colorPick    ? `Blank Color: ${colorPick}`                      : '',
+      sizeLine     ? `Size Breakdown: ${sizeLine}`                    : '',
+      garmentNotes ? `Garment Notes: ${garmentNotes}`                 : '',
+      dueDate      ? `Due Date: ${dueDate}`                           : '',
       flexibility ? `Flexibility: ${flexMap[flexibility] || flexibility}` : '',
       `Order Type: ${type}`,
       `Turnaround: ${rush}`,
@@ -1753,7 +2574,7 @@
       'Print Locations:',
       decodeURIComponent(locsStr),
       '',
-      `Estimated Total: ${tot} (${ppc}/pc)`,
+      totalLine,
       pmsLine,
       shipLine,
       desc ? `\nProject Notes:\n${desc}\n` : '',
@@ -1762,14 +2583,26 @@
       artStatus,
       '  (See file references per location above)',
       '',
-      'Please confirm and let me know next steps.',
+      formMode
+        ? 'Please reply with pricing and next steps. Thanks!'
+        : 'Please confirm and let me know next steps.',
     ].filter(line => line !== '').join('\n');
 
-    const subject = `Quote — ${clientName} / ${clientCompany} — ${qty} pcs`;
+    const subject = formMode
+      ? `Quote REQUEST — ${clientName} / ${clientCompany} — ${qty} pcs (custom)`
+      : `Quote — ${clientName} / ${clientCompany} — ${qty} pcs`;
     window.location.href = `mailto:info@meshprintstudio.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }
 
   // ── INIT ──────────────────────────────────────
+  // Seed default color from the initial selected garment
+  {
+    const g0 = GARMENT_CATALOG.find(g => g.id === selectedGarmentId);
+    if (g0 && g0.colors && g0.colors.length) selectedColor = g0.colors[0];
+  }
+  renderCategoryChips();
+  renderCatalog();
+  renderSizeGrid();
   renderGarments();
   renderLocations();
   calculate();
@@ -1787,6 +2620,36 @@
 </script>
 
 <!-- SHIPPING ADDRESS MODAL -->
+<!-- OTHER / QUOTE-REQUEST EXPLAINER MODAL -->
+<div class="modal-overlay" id="otherExplainerModal" style="display:none" onclick="closeOtherExplainer()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title">Custom Quote Request</div>
+      <button class="modal-close" onclick="closeOtherExplainer()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text-mid);line-height:1.6;margin:0">
+        Selecting <strong style="color:var(--cream)">Other</strong> tells us you want something outside our
+        listed bestsellers — a different garment, a specialty fabric, headwear, bags, fleece blankets, whatever
+        you've got in mind.
+      </p>
+      <p style="font-size:13px;color:var(--text-mid);line-height:1.6;margin:0">
+        Because live pricing depends on garment-specific wholesale cost, the estimator turns off in this mode.
+        The calculator becomes a <strong style="color:var(--tan)">quote-request form</strong>: we still capture
+        all of your order details — sizes, print locations, art files, deadlines — and we'll reply with a
+        custom quote within one business day.
+      </p>
+      <p style="font-size:12px;color:var(--text-muted);line-height:1.6;margin:0;font-style:italic">
+        Tip: describe what you want in as much detail as possible in the "Describe What You Want" field below
+        the garment grid, and add any reference links in the Project Notes section further down.
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-save-btn" onclick="closeOtherExplainer()">Got it — continue</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="addressModal" style="display:none" onclick="closeAddressModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
     <div class="modal-header">
